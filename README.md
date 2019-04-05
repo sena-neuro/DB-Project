@@ -4,4 +4,4 @@ This project is made by Can Özgürel, [Sena Er](https://github.com/valkyrie7/),
 
 # Reports
 - [Project Proposal Report](https://drive.google.com/open?id=1ewfNwK3pBaWb6GnAHguMXRVqgk-V-pXB)
-- [Project Proposal Report](https://drive.google.com/file/d/1WUctjFremsK9LOUTtrWHNq0cFdjWYZbk/view?usp=sharing)
+- [Project Design Report](https://drive.google.com/file/d/1WUctjFremsK9LOUTtrWHNq0cFdjWYZbk/view?usp=sharing)
