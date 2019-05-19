@@ -27,6 +27,38 @@
   else{
     header("Location: index.php");
   }
+  
+    
+    include("dbconfig.php");
+    if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
+        $searchval = $_POST["searched"];
+        $searchval = "%" . $searchval . "%";
+        $query = 'SELECT Name
+                  FROM Company
+                  WHERE Name LIKE ?';
+                  
+        $stmt = mysqli_stmt_init($sql_conn);
+        
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            echo("Error description: " . mysqli_error($conn));
+            header("Location: index.php?error=sqlerror");
+            exit();
+        }
+        
+        mysqli_stmt_bind_param($stmt, 's', $searchval);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+        
+        $matching_companies = [];
+        if ($result->num_rows > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+                array_push($matching_companies, $row["Name"]);
+            }
+        }
+        
+        echo json_encode($matching_companies);
+        exit();
+    }
 ?>
 <html>
   <head>
@@ -59,7 +91,13 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <style> 
         .checked {
-          color: orange;
+            color: orange;
+        }
+        
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
         }
       </style>
     </head>
@@ -74,6 +112,48 @@
           <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
           <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
         </div>
+        
+        <div class="input-group mb-3" style="display:inline-block; width: 400px;">
+        <div class="dropdown">
+            <input type="text" autocomplete="on" oninput="inputReceived(this);" id="search-bar" class="form-control dropdown-toggle" data-toggle="dropdown" size="50" placeholder="Search a company" name="search-bar" style="display: inline-block; width: 400px; margin-left:50px;">
+            <ul id="search-bar-dropdown" class="dropdown-menu scrollable-menu" style="padding-left: 15px; padding-right: 15px">
+            </ul>
+        </div>
+      </div>
+      
+      <script>
+        function inputReceived(searchbar) {
+            if ($('.dropdown').find('.dropdown-menu').is(":hidden")){
+                $('.dropdown-toggle').dropdown('toggle');
+            }
+            
+            if (searchbar.value != "") {
+                dropdown = document.getElementById("search-bar-dropdown");
+                while(dropdown.firstChild) {
+                    dropdown.removeChild(dropdown.firstChild);
+                }
+                
+                var url = window.location.href;
+                url = url.substring(url.lastIndexOf("/")+1);
+                
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {searched: searchbar.value},
+                    success: function(res) {
+                        console.log(res);
+                        results = JSON.parse(res);
+                        for (let i = 0; i < results.length; i++) {          
+                            let li = document.createElement("li");
+                            li.innerHTML = results[i];
+                            li.onclick = function() {searchbar.value = li.innerHTML;};
+                            dropdown.appendChild(li);
+                        }
+                    }
+                });
+            }
+        }
+      </script>
 
              <nav class="main-nav float-right d-none d-lg-block">
           <ul>
@@ -172,12 +252,10 @@
                         } 
                         else{
                           printf("Error in Post Job Review");
-
                         }
                         $stmt_interview_reviews ="SELECT *
                         FROM Post_Interview_Review NATURAL JOIN Interview_Review
                         WHERE(Post_Interview_Review.AccountID = ".$_SESSION['accountID'].")";
-
                         if($result_int_rev = mysqli_query($conn,$stmt_interview_reviews)){
                           $num_of_interview_reviews = mysqli_num_rows($result_int_rev);
                           printf("Select returned %d rows.\n", $num_of_interview_reviews);
@@ -197,7 +275,6 @@
                             $sql_post = "SELECT * FROM Post WHERE PostID=" . $row['PostID'];
                             $result_post = mysqli_query($conn, $sql_post);
                             $row_p = mysqli_fetch_assoc($result_post);
-
                             echo '
                             <h5 class="card-title">Review for -company name-</h5>
                             <div class="card text-center">
