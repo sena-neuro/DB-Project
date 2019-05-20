@@ -132,7 +132,7 @@
         }
         
         $interview_reviews = [];
-        $query = "Select Title, Anonimity, Rating, Pros, Cons, OfferedSalary, Username, Creation_Date
+        $query = "Select Title, Anonimity, Rating, Pros, Cons, Offered_salary, Username, Creation_Date
                   From Interview_Review Natural Join Review, Post Natural Join Company, Interviewee Natural Join Account Natural Join Post_Interview_Review
                   Where Post_Interview_Review.PostID = Interview_Review.PostID AND Interview_Review.PostID = Post.PostID AND CompanyID = ?";
                   
@@ -308,87 +308,11 @@
                     var rews = JSON.parse(res);
                     
                     // JOB REVIEWS
-                    var index = 0;
-                    var innerHTMLString = "";
-                    innerHTMLString += "<div id='review_accordion' style='width: 980px'>";
-                    for (rew of rews[0]) {
-                        console.log(rew);
-                        innerHTMLString +=  "<div class='card'>";
-                        innerHTMLString +=      "<div class='card-header'>";
-                        innerHTMLString +=          "<a class='card-link' data-toggle='collapse' href='#collapse" + index + "'>";
-                        innerHTMLString +=              rew[0];
-                        innerHTMLString +=          "</a>";
-                        innerHTMLString +=      "</div>";
-                        innerHTMLString +=      "<div id='collapse" + index + "' class='collapse show' data-parent='#review_accordion'>";
-                        innerHTMLString +=          "<div class='card-body'>";
-                        innerHTMLString +=              "<div class='card'>";
-                        innerHTMLString +=                  "<div class='card-header'>";
-                        innerHTMLString +=                      "<ul class='nav nav-tabs card-header-tabs'>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link active' id='rating" + index + "-tab' data-toggle='tab' href='#rating"  + index + "' role='tab' aria-controls='rating" + index + "' aria-selected='true'>Rating</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link' id='pros" + index + "-tab' data-toggle='tab' href='#pros"  + index + "' role='tab' aria-controls='pros" + index + "' aria-selected='false'>Pros</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link' id='cons" + index + "-tab' data-toggle='tab' href='#cons"  + index + "' role='tab' aria-controls='cons" + index + "' aria-selected='false'>Cons</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link' id='comments_workplace" + index + "-tab' data-toggle='tab' href='#comments_workplace"  + index + "' role='tab' aria-controls='comments_workplace" + index + "' aria-selected='false'>Comments on Workplace</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link' id='comments_coworkers" + index + "-tab' data-toggle='tab' href='#comments_coworkers"  + index + "' role='tab' aria-controls='comments_coworkers" + index + "' aria-selected='false'>Comments on Coworkers</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                          "<li class='nav-item'>";
-                        innerHTMLString +=                              "<a class='nav-link' id='comments_management" + index + "-tab' data-toggle='tab' href='#comments_management"  + index + "' role='tab' aria-controls='comments_management" + index + "' aria-selected='false'>Comments on Management</a>";
-                        innerHTMLString +=                          "</li>";
-                        innerHTMLString +=                      "</ul>";
-                        innerHTMLString +=                  "</div>";
-                        innerHTMLString +=                  "<div class='card-body'>";
-                        innerHTMLString +=                      "<div class='tab-content'>";
-                        innerHTMLString +=                          "<div class='tab-content'>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container show active text-center' id='rating" + index + "' role='tabpanel'>";
-                                                                        if (rew[1] == 1) {
-                        innerHTMLString +=                                  "<h5>Anonymous Review</h5>";
-                                                                        } else {
-                        innerHTMLString +=                                  "<h5>Review by " + rew[10] + "</h5>";
-                                                                        }                
-                        innerHTMLString +=                                  "<br><h4>Overall Rating</h4>";
-                                                                        for (let i = 0; i < 10; i++) {
-                                                                            if (i < parseInt(rew[2])) {
-                        innerHTMLString +=                                  "<span class='fa fa-star' style='color: orange'></span>";
-                                                                            } else {
-                        innerHTMLString +=                                  "<span class='fa fa-star'></span>";
-                                                                            }
-                                                                        }
-                        innerHTMLString +=                                  "<br><br><h5> Posted: " + rew[11] + "</h5>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container' id='pros" + index + "' role='tabpanel'>";
-                        innerHTMLString +=                                  "<p>" + rew[3] + "</p>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container' id='cons" + index + "' role='tabpanel'>";
-                        innerHTMLString +=                                  "<p>" + rew[4] + "</p>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_workplace" + index + "' role='tabpanel'>";
-                        innerHTMLString +=                                  "<p>" + rew[5] + "</p>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_coworkers" + index + "' role='tabpanel'>";
-                        innerHTMLString +=                                  "<p>" + rew[6] + "</p>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_management" + index + "' role='tabpanel'>";
-                        innerHTMLString +=                                  "<p>" + rew[7] + "</p>";
-                        innerHTMLString +=                              "</div>";
-                        innerHTMLString +=                          "</div>";
-                        innerHTMLString +=                      "</div>";
-                        innerHTMLString +=                  "</div>";
-                        innerHTMLString +=              "</div>";
-                        innerHTMLString +=          "</div>";
-                        innerHTMLString +=      "</div>";
-                        innerHTMLString +=  "</div>";
-                    }
-                    innerHTMLString += "</div>";
-                    console.log(innerHTMLString);
-                    reviews.innerHTML = innerHTMLString;
+                    var innerHTMLString1 = createHTMLStringForJobReview(rews[0]);
+                    var innerHTMLString2 = createHTMLStringForInterviewReview(rews[1]);
+                    
+                    var finalString = innerHTMLString1 + "<br>" + innerHTMLString2;
+                    reviews.innerHTML = finalString;
                     
                     if (rews.length == 0) {
                         reviews.innerHTML = "Sorry, there are no reviews for this company.";
@@ -612,5 +536,168 @@
             </div>
         </div>
     </section>
+    
+    <script>
+        function createHTMLStringForJobReview(parseArray) {
+            var index = 0;
+            var innerHTMLString = "";
+            if (parseArray.length != 0) {
+                innerHTMLString += "<h2>Job Reviews</h2>";
+            }
+            innerHTMLString += "<div id='review_accordion' style='width: 980px'>";
+            for (rew of parseArray) {
+                console.log(rew);
+                innerHTMLString +=  "<div class='card'>";
+                innerHTMLString +=      "<div class='card-header'>";
+                innerHTMLString +=          "<a class='card-link' data-toggle='collapse' href='#collapse" + index + "'>";
+                innerHTMLString +=              rew[0];
+                innerHTMLString +=          "</a>";
+                innerHTMLString +=      "</div>";
+                innerHTMLString +=      "<div id='collapse" + index + "' class='collapse' data-parent='#review_accordion'>";
+                innerHTMLString +=          "<div class='card-body'>";
+                innerHTMLString +=              "<div class='card'>";
+                innerHTMLString +=                  "<div class='card-header'>";
+                innerHTMLString +=                      "<ul class='nav nav-tabs card-header-tabs'>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link active' id='rating" + index + "-tab' data-toggle='tab' href='#rating"  + index + "' role='tab' aria-controls='rating" + index + "' aria-selected='true'>Rating</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='pros" + index + "-tab' data-toggle='tab' href='#pros"  + index + "' role='tab' aria-controls='pros" + index + "' aria-selected='false'>Pros</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='cons" + index + "-tab' data-toggle='tab' href='#cons"  + index + "' role='tab' aria-controls='cons" + index + "' aria-selected='false'>Cons</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='comments_workplace" + index + "-tab' data-toggle='tab' href='#comments_workplace"  + index + "' role='tab' aria-controls='comments_workplace" + index + "' aria-selected='false'>Comments on Workplace</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='comments_coworkers" + index + "-tab' data-toggle='tab' href='#comments_coworkers"  + index + "' role='tab' aria-controls='comments_coworkers" + index + "' aria-selected='false'>Comments on Coworkers</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='comments_management" + index + "-tab' data-toggle='tab' href='#comments_management"  + index + "' role='tab' aria-controls='comments_management" + index + "' aria-selected='false'>Comments on Management</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                      "</ul>";
+                innerHTMLString +=                  "</div>";
+                innerHTMLString +=                  "<div class='card-body'>";
+                innerHTMLString +=                      "<div class='tab-content'>";
+                innerHTMLString +=                          "<div class='tab-content'>";
+                innerHTMLString +=                              "<div class='tab-pane fade container show active text-center' id='rating" + index + "' role='tabpanel'>";
+                                                                if (rew[1] == 1) {
+                innerHTMLString +=                                  "<h5>Anonymous Review</h5>";
+                                                                } else {
+                innerHTMLString +=                                  "<h5>Review by " + rew[10] + "</h5>";
+                                                                }
+                innerHTMLString +=                                  "<h5>Position: " + rew[8] + "</h5>";
+                innerHTMLString +=                                  "<h5>Salary: " + rew[9] + "$</h5>";                   
+                innerHTMLString +=                                  "<br><h4>Overall Rating</h4>";
+                                                                for (let i = 0; i < 10; i++) {
+                                                                    if (i < parseInt(rew[2])) {
+                innerHTMLString +=                                  "<span class='fa fa-star' style='color: orange'></span>";
+                                                                    } else {
+                innerHTMLString +=                                  "<span class='fa fa-star'></span>";
+                                                                    }
+                                                                }
+                innerHTMLString +=                                  "<br><br><h5> Posted: " + rew[11] + "</h5>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='pros" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[3] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='cons" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[4] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_workplace" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[5] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_coworkers" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[6] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='comments_management" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[7] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                          "</div>";
+                innerHTMLString +=                      "</div>";
+                innerHTMLString +=                  "</div>";
+                innerHTMLString +=              "</div>";
+                innerHTMLString +=          "</div>";
+                innerHTMLString +=      "</div>";
+                innerHTMLString +=  "</div>";
+                
+                index++;
+            }
+            innerHTMLString += "</div>";
+            return innerHTMLString;
+        }
+        
+        function createHTMLStringForInterviewReview(parseArray) {
+            var index = -1;
+            var innerHTMLString = "";
+            if (parseArray.length != 0) {
+                innerHTMLString += "<h2>Interview Reviews</h2>";
+            }
+            innerHTMLString += "<div id='review_accordion' style='width: 980px'>";
+            for (rew of parseArray) {
+                console.log(rew);
+                innerHTMLString +=  "<div class='card'>";
+                innerHTMLString +=      "<div class='card-header'>";
+                innerHTMLString +=          "<a class='card-link' data-toggle='collapse' href='#collapse" + index + "'>";
+                innerHTMLString +=              rew[0];
+                innerHTMLString +=          "</a>";
+                innerHTMLString +=      "</div>";
+                innerHTMLString +=      "<div id='collapse" + index + "' class='collapse' data-parent='#review_accordion'>";
+                innerHTMLString +=          "<div class='card-body'>";
+                innerHTMLString +=              "<div class='card'>";
+                innerHTMLString +=                  "<div class='card-header'>";
+                innerHTMLString +=                      "<ul class='nav nav-tabs card-header-tabs'>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link active' id='rating" + index + "-tab' data-toggle='tab' href='#rating"  + index + "' role='tab' aria-controls='rating" + index + "' aria-selected='true'>Rating</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='pros" + index + "-tab' data-toggle='tab' href='#pros"  + index + "' role='tab' aria-controls='pros" + index + "' aria-selected='false'>Pros</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                          "<li class='nav-item'>";
+                innerHTMLString +=                              "<a class='nav-link' id='cons" + index + "-tab' data-toggle='tab' href='#cons"  + index + "' role='tab' aria-controls='cons" + index + "' aria-selected='false'>Cons</a>";
+                innerHTMLString +=                          "</li>";
+                innerHTMLString +=                      "</ul>";
+                innerHTMLString +=                  "</div>";
+                innerHTMLString +=                  "<div class='card-body'>";
+                innerHTMLString +=                      "<div class='tab-content'>";
+                innerHTMLString +=                          "<div class='tab-content'>";
+                innerHTMLString +=                              "<div class='tab-pane fade container show active text-center' id='rating" + index + "' role='tabpanel'>";
+                                                                if (rew[1] == 1) {
+                innerHTMLString +=                                  "<h5>Anonymous Review</h5>";
+                                                                } else {
+                innerHTMLString +=                                  "<h5>Review by " + rew[6] + "</h5>";
+                                                                }
+                innerHTMLString +=                                  "<h5>Offered Salary: " + rew[5] + "$</h5>";                   
+                innerHTMLString +=                                  "<br><h4>Overall Rating</h4>";
+                                                                for (let i = 0; i < 10; i++) {
+                                                                    if (i < parseInt(rew[2])) {
+                innerHTMLString +=                                  "<span class='fa fa-star' style='color: orange'></span>";
+                                                                    } else {
+                innerHTMLString +=                                  "<span class='fa fa-star'></span>";
+                                                                    }
+                                                                }
+                innerHTMLString +=                                  "<br><br><h5> Posted: " + rew[7] + "</h5>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='pros" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[3] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                              "<div class='tab-pane fade container' id='cons" + index + "' role='tabpanel'>";
+                innerHTMLString +=                                  "<p>" + rew[4] + "</p>";
+                innerHTMLString +=                              "</div>";
+                innerHTMLString +=                          "</div>";
+                innerHTMLString +=                      "</div>";
+                innerHTMLString +=                  "</div>";
+                innerHTMLString +=              "</div>";
+                innerHTMLString +=          "</div>";
+                innerHTMLString +=      "</div>";
+                innerHTMLString +=  "</div>";
+                
+                index--;
+            }
+            innerHTMLString += "</div>";
+            return innerHTMLString;
+        }
+    </script>
 </body>
 </html>
