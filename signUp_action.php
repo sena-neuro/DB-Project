@@ -8,7 +8,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 	$bdate = $_POST['bdate'];
 	$pass = $_POST['password'];
 	$branch =$_POST['branch'];
-	$companyName = $_POST['companyName'];
+	$companyName = $_POST['company'];
 	$jobTitle = $_POST['jobTitle'];
 	$contact_info =  $_POST['contact_info'];
 	$fname = trim($fname);
@@ -59,7 +59,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 
 	if(isset($_POST['signUpSubmitRepresentative'])){
 		// Check if there is a company with company name
-		$sql_c= "SELECT * FROM Company WHERE Name=?";
+		$sql_c = "SELECT * FROM Company WHERE Name=?";
 		$stmt_c = mysqli_stmt_init($conn);
 		if(!mysqli_stmt_prepare($stmt_c,$sql_c)){
 			header("Location: ".$prevLoc."?error=compsqlerror");
@@ -94,16 +94,18 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 	if(isset($_POST['signUpSubmitRepresentative'])){
 		// If the account is  a representative account Insert into representative table
 
-		$sql = "INSERT INTO Comp_Rep(AccountID, CompanyID, Branch, Contact_Info, Job_Title)
-		VALUES (?,?, ?, ?, ?)";
+		$sql = "INSERT INTO Comp_Rep(AccountID, Branch, Contact_Info, Job_Title)
+		VALUES (?, ?, ?, ?)";
 		$stmt = mysqli_stmt_init($conn);
 		if(!mysqli_stmt_prepare($stmt,$sql)){
 			header("Location: ".$prevLoc."?error=sqlerrorRepInsert");
 			exit();
 		}
-		mysqli_stmt_bind_param($stmt,"iisss",$accountID, $companyID ,$branch,$contact_info,$jobTitle);
+		mysqli_stmt_bind_param($stmt,"isss",$accountID,$branch,$contact_info,$jobTitle);
 		$res = mysqli_stmt_execute($stmt);
-		$_SESSION['companyID'] = $companyID;
+		$stmt_rep ="INSERT INTO Represents(AccountID,CompanyID)
+                    VALUES (".$row['AccountID'].",".$companyID.")";
+				  $stmt_rep = mysqli_query($conn,$stmt_post);
 	}
 	elseif (isset($_POST['signUpSubmitReviewer'])) {
 		$sql_us = "INSERT INTO User(AccountID) VALUES (?)";
@@ -116,6 +118,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 		$res = mysqli_stmt_execute($stmt_us);
 	}		
 	session_start();
+	$_SESSION['companyID'] = $companyID;
     $_SESSION['fname'] = $first_name;
     $_SESSION['lname'] = $last_name;
 	$_SESSION['uname'] = $uname;

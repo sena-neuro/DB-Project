@@ -1,5 +1,7 @@
 <?php
 session_start();
+require 'db_config.php';
+$conn = Connect();
 if(isset($_GET['error'])){
   if($_GET['error'] == "existingUserName"){
     echo "<script type='text/javascript'>alert('That Username is already taken');</script>";
@@ -120,10 +122,19 @@ if(isset($_GET['error'])){
               <div class="form-group col-sm-6">
                 <input type="password" id="inputPasswordConfirm" placeholder="Confirm Password">
               </div> 
-            <div class="form-group">
-              <label for="companyID"><br>CompanyName</br></label>
-              <input type="text" placeholder="company" name="companyName" >
-            </div>
+              <label>Company</label>
+              <select class="form-control" id="companySelect" name="company">
+                <?php  
+                  $company_query = "SELECT Name From Company";
+                  $comp_res = mysqli_query($conn,$company_query);
+                  if (mysqli_num_rows($comp_res) > 0) {
+                    // output data of each row
+                    while($row = mysqli_fetch_assoc($comp_res)) {
+                      echo "<option>".$row["Name"]."</option>";
+                    }
+                  }
+                ?>
+              <select>
             <div class="form-group">
               <label for="Branch"><br>Branch</br></label>
               <input type="text" placeholder="Company Branch" name="branch" >

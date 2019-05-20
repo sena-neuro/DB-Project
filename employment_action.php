@@ -17,14 +17,6 @@
 		if($cid_res) {
 			if($cid_row = mysqli_fetch_assoc($cid_res)) {
 				$cid = $cid_row['CompanyID'];
-				echo $cid;
-				echo "-----";
-				echo $_SESSION['accountID'];
-				echo "-----";
-				echo $salary;
-				echo "-----";
-				echo $job_title;
-				
 				$emp_insert_query = "INSERT INTO Employee (AccountID, Salary, Position) VALUES (?, ?, ?)";	
 				$stmt = mysqli_stmt_init($conn);
 				if(!mysqli_stmt_prepare($stmt, $emp_insert_query)){

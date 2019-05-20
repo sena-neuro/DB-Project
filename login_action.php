@@ -24,6 +24,16 @@ if(isset($_POST['login-submit'])){
                 $_SESSION['lname'] = $row['Name_second_name'];
 				$_SESSION['uname'] = $row['Username'];
 				$_SESSION['accountID'] = $row['AccountID'];
+				$stmt_rep ="SELECT *
+                          FROM Represents 
+                          WHERE AccountID = ".$row['AccountID'];
+                          if($result_post = mysqli_query($conn,$stmt_post)){
+                            	$row = mysqli_fetch_assoc($result_post))
+                            	$_SESSION['companyID'] = $row['CompanyID'];
+                          } 
+                          else{
+                            header("Location: index.php?error=sqlerror");
+                          }
 				header("Location: account_page.php");
 				exit();
 			}

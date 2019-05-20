@@ -18,7 +18,6 @@
       $res = mysqli_stmt_get_result($stmt_u);
       if($row = mysqli_fetch_assoc($res)){
         $account_type="Company Representative";
-        exit();
       }
       else
         $account_type="Reviewer";
@@ -311,20 +310,19 @@
                                   <label>Job Title</label>
                                   <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" name="job_title" aria-describedby="basic-addon1">
                                 </div>
-                                <div class="form-group">
                                   <label>Company</label>
                                   <select class="form-control" id="companySelect" name="company">
                                     <?php  
                                       $company_query = "SELECT Name From Company";
                                       $comp_res = mysqli_query($conn,$company_query);
                                       if (mysqli_num_rows($comp_res) > 0) {
-                                        // output data of each row
+                                        echo "in_if";
                                         while($row = mysqli_fetch_assoc($comp_res)) {
+                                          echo "in_whlie";
                                           echo "<option>".$row["Name"]."</option>";
                                         }
                                       }
                                     ?>
-                                    
                                   <select>
                                 </div>
                                 <div class="form-group">
@@ -438,9 +436,9 @@
                           // if representative get number of posts to their company
                           $stmt_post ="SELECT *
                           FROM Post
-                          WHERE(CompanyID = ".$_SESSION['companyID'].")";
+                          WHERE CompanyID = ".$_SESSION['companyID'];
 
-                          if($result_post= mysqli_query($conn,$stmt_post)){
+                          if($result_post = mysqli_query($conn,$stmt_post)){
                             $num_of_posts = mysqli_num_rows($result_post);
                             //printf("Select returned %d rows.\n", $num_of_job_reviews);
                           } 
@@ -480,7 +478,6 @@
                             $stmt_name ="SELECT *
                           	FROM Company WHERE CompanyID = ".$row['CompanyID'];
                           	$res_name = mysqli_query($conn,$stmt_name);
-
                           	$row_name = mysqli_fetch_assoc($res_name);
 
                             echo '
@@ -497,7 +494,8 @@
 	                                    <a class="nav-link" id="cons'.$ind.'-tab" data-toggle="tab" href="#cons'.$ind.'" role="tab" aria-controls="cons'.$ind.'" aria-selected="false">Cons</a>
 	                                  </li>';
 	                                  if($type == "jb"){
-		                                  echo '<li class="nav-item">
+		                                  echo 
+                                      '<li class="nav-item">
 		                                    <a class="nav-link" id="Comments_Workplace-tab'.$ind.'" data-toggle="tab" href="#Comments_Workplace'.$ind.'" role="tab" aria-controls="Comments_Workplace'.$ind.'" aria-selected="false">Workplace Comments</a>
 		                                  </li>
 		                                  <li class="nav-item">
@@ -507,10 +505,11 @@
 		                                    <a class="nav-link" id="Comments_Management-tab'.$ind.'" data-toggle="tab" href="#Comments_Management'.$ind.'" role="tab" aria-controls="Comments_Management'.$ind.'" aria-selected="false">Management Comments</a>
 		                                  </li>';
 		                              }
-	                                echo '</ul>
+	                                echo 
+                                  '</ul>
 	                              </div>
 	                              <div class="card-body">
-	                              <h5 class="card-title">Review for '. $row_name['Name'] .'</h5>
+	                                <h5 class="card-title">Review for '. $row_name['Name'] .'</h5>
 	                                <div class="tab-content" id="myTabContent'.$ind.'">
 	                                  <div class="tab-pane fade show active" id="rating'.$ind.'"  role="tabpanel" aria-labelledby="rating-tab'.$ind.'"> <h2>Overall Rating</h2>
 	                                    <div class="star-ratings-css">';
@@ -529,27 +528,23 @@
 	                                  <div class="tab-pane fade" id="pros'.$ind.'" role="tabpanel" aria-labelledby="pros-tab'.$ind.'">'.$row_rew["Pros"].'</div>
 	                                  <div class="tab-pane fade" id="cons'.$ind.'" role="tabpanel" aria-labelledby="cons-tab'.$ind.'">'.$row_rew["Cons"].'</div>';
 	                                  if($type == "jb"){
-	                                  	echo '<div class="tab-pane fade" id="Comments_Workplace'.$ind.'" role="tabpanel" aria-labelledby="Comments_Workplace-tab'.$ind.'">'
+	                                  	echo 
+                                      '<div class="tab-pane fade" id="Comments_Workplace'.$ind.'" role="tabpanel" aria-labelledby="Comments_Workplace-tab'.$ind.'">'
 	                                  		.$row_['Comments_Workplace'].
-	                                  	'</div>';
-	                                  	echo '<div class="tab-pane fade" id="Comments_Coworkers'.$ind.'" role="tabpanel" aria-labelledby="Comments_Coworkers-tab'.$ind.'">'
+	                                  	'</div>
+                                      <div class="tab-pane fade" id="Comments_Coworkers'.$ind.'" role="tabpanel" aria-labelledby="Comments_Coworkers-tab'.$ind.'">'
 	                                  		.$row_['Comments_Coworkers'].
-	                                  	'</div>';
-	                                  	echo '<div class="tab-pane fade" id="Comments_Management'.$ind.'" role="tabpanel" aria-labelledby="Comments_Management-tab'.$ind.'">'
+	                                  	'</div>
+                                      <div class="tab-pane fade" id="Comments_Management'.$ind.'" role="tabpanel" aria-labelledby="Comments_Management-tab'.$ind.'">'
 	                                  		.$row_['Comments_Management'].
 	                                  	'</div>';
 	                                  }
-	                                echo '</div>
+	                                echo 
+                                  '</div>
 	                              </div>
 	                            <div class="card-footer text">
-	                            '.$row['Creation_Date'];
-	                            if($account_type == "Company Representative"){
-	                            	echo '<form id="removal_request">
-	                            					<input type="submit" value="Requrest Removal" />
-																			</form>';
-	                            }
-	                            echo '</div>
-	                          </div>';    	
+	                            '.$row['Creation_Date'].'</div>
+                              </div>';    	
                           }
                         }
                       ?>
