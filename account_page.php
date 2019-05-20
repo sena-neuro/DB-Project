@@ -110,89 +110,89 @@
           <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
         </div>
         
-      <div class="input-group mb-3" style="display:inline-block; width: 400px;">
-        <div class="dropdown">
-            <form method="post" action="company_page.php" onsubmit="submitted(event);">
-                <input type="text" autocomplete="off" oninput="inputReceived(this);" id="search-bar" class="form-control dropdown-toggle" data-toggle="dropdown" size="50" placeholder="Search a company" name="search-bar" style="display: inline-block; width: 400px; margin-left:50px;">
-                <ul id="search-bar-dropdown" class="dropdown-menu scrollable-menu" style="padding-left: 15px; padding-right: 15px">
-                </ul>
-                <span id="errorSpanSearchBar" style="color: red; margin-left: 55px;"></span>
-                <input type="hidden" name="cid" id="hiddenCompanyId" value="">
-            </form>
+        <div class="input-group mb-3" style="display:inline-block; width: 400px;">
+          <div class="dropdown">
+              <form method="post" action="company_page.php" onsubmit="submitted(event);">
+                  <input type="text" autocomplete="off" oninput="inputReceived(this);" id="search-bar" class="form-control dropdown-toggle" data-toggle="dropdown" size="50" placeholder="Search a company" name="search-bar" style="display: inline-block; width: 400px; margin-left:50px;">
+                  <ul id="search-bar-dropdown" class="dropdown-menu scrollable-menu" style="padding-left: 15px; padding-right: 15px">
+                  </ul>
+                  <span id="errorSpanSearchBar" style="color: red; margin-left: 55px;"></span>
+                  <input type="hidden" name="cid" id="hiddenCompanyId" value="">
+              </form>
+          </div>
         </div>
-      </div>
-      
-      <script>
-        var curId = -1;
         
-        function submitted(event) {
-            console.log(curId);
-            
-            var span = document.getElementById("errorSpanSearchBar");
-            if (curId == -1) {
-                span.innerHTML = "Please select a company from the list*";   
+        <script>
+          var curId = -1;
+          
+          function submitted(event) {
+              console.log(curId);
+              
+              var span = document.getElementById("errorSpanSearchBar");
+              if (curId == -1) {
+                  span.innerHTML = "Please select a company from the list*";   
 
-                if ($('.dropdown').find('.dropdown-menu').is(":visible")){
-                    $('#search-bar-dropdown').hide();
-                }
-                event.preventDefault();
-                
-            } else {
-                span.innerHTML = "";
-                
-                var hiddenCompanyId = document.getElementById("hiddenCompanyId");
-                hiddenCompanyId.value = curId;
-                
-                /*var url = window.location.href;
-                url = url.substring(0, url.lastIndexOf("/"));
-                url = url + "/company_page.php?id=" + curId;
-                window.location = url;*/
-            }
-        }
-        
-        function inputReceived(searchbar) {
-            curId = -1;
-            
-            if ($('#search-bar-dropdown').is(":hidden")){
-                $('#search-bar-dropdown').show();
-            }
-            
-            if (searchbar.value != "") {
-                dropdown = document.getElementById("search-bar-dropdown");
-                while(dropdown.firstChild) {
-                    dropdown.removeChild(dropdown.firstChild);
-                }
-                
-                var url = window.location.href;
-                url = url.substring(url.lastIndexOf("/")+1);
-                
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: {searched: searchbar.value},
-                    success: function(res) {
-                        results = JSON.parse(res);
-                        for (let i = 0; i < results.length; i++) {          
-                            let li = document.createElement("li");
-                            li.innerHTML = results[i][1];
-                            li.onclick = function() {
-                                searchbar.value = li.innerHTML;
-                                curId = results[i][0];
-                                
-                                if ($('#search-bar-dropdown').is(":visible")){
-                                    $('#search-bar-dropdown').hide();
-                                }
-                                searchbar.focus();
-                            };
-                            dropdown.appendChild(li);
-                        }
-                    }
-                });
-            }
-        }
-      </script>
+                  if ($('.dropdown').find('.dropdown-menu').is(":visible")){
+                      $('#search-bar-dropdown').hide();
+                  }
+                  event.preventDefault();
+                  
+              } else {
+                  span.innerHTML = "";
+                  
+                  var hiddenCompanyId = document.getElementById("hiddenCompanyId");
+                  hiddenCompanyId.value = curId;
+                  
+                  /*var url = window.location.href;
+                  url = url.substring(0, url.lastIndexOf("/"));
+                  url = url + "/company_page.php?id=" + curId;
+                  window.location = url;*/
+              }
+          }
+          
+          function inputReceived(searchbar) {
+              curId = -1;
+              
+              if ($('#search-bar-dropdown').is(":hidden")){
+                  $('#search-bar-dropdown').show();
+              }
+              
+              if (searchbar.value != "") {
+                  dropdown = document.getElementById("search-bar-dropdown");
+                  while(dropdown.firstChild) {
+                      dropdown.removeChild(dropdown.firstChild);
+                  }
+                  
+                  var url = window.location.href;
+                  url = url.substring(url.lastIndexOf("/")+1);
+                  
+                  $.ajax({
+                      type: "POST",
+                      url: url,
+                      data: {searched: searchbar.value},
+                      success: function(res) {
+                          results = JSON.parse(res);
+                          for (let i = 0; i < results.length; i++) {          
+                              let li = document.createElement("li");
+                              li.innerHTML = results[i][1];
+                              li.onclick = function() {
+                                  searchbar.value = li.innerHTML;
+                                  curId = results[i][0];
+                                  
+                                  if ($('#search-bar-dropdown').is(":visible")){
+                                      $('#search-bar-dropdown').hide();
+                                  }
+                                  searchbar.focus();
+                              };
+                              dropdown.appendChild(li);
+                          }
+                      }
+                  });
+              }
+          }
+        </script>
 
-             <nav class="main-nav float-right d-none d-lg-block">
+        <nav class="main-nav float-right d-none d-lg-block">
           <ul>
             <?php if(isset($_SESSION['accountID']))
             {
@@ -310,6 +310,7 @@
                                   <label>Job Title</label>
                                   <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" name="job_title" aria-describedby="basic-addon1">
                                 </div>
+                                <div class="form-group">
                                   <label>Company</label>
                                   <select class="form-control" id="companySelect" name="company">
                                     <?php  
@@ -323,7 +324,7 @@
                                         }
                                       }
                                     ?>
-                                  <select>
+                                  </select>
                                 </div>
                                 <div class="form-group">
                                   <label>Start Date</label>
@@ -504,7 +505,7 @@
 		                                  <li class="nav-item">
 		                                    <a class="nav-link" id="Comments_Management-tab'.$ind.'" data-toggle="tab" href="#Comments_Management'.$ind.'" role="tab" aria-controls="Comments_Management'.$ind.'" aria-selected="false">Management Comments</a>
 		                                  </li>';
-		                              }
+		                                }
 	                                echo 
                                   '</ul>
 	                              </div>
