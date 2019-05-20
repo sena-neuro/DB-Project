@@ -17,7 +17,7 @@
       mysqli_stmt_execute($stmt_u);
       $res = mysqli_stmt_get_result($stmt_u);
       if($row = mysqli_fetch_assoc($res)){
-        $account_type="Company Representative";
+        $account_type="Representative";
         exit();
       }
       else
@@ -162,89 +162,144 @@
                 <div class="container">
                   <div class="row">
                     <div class="col-lg-7 col-md-6"><h2>Reviews</h2> </div>
-                    <?php 
-                        $stmt_job_reviews ="SELECT *
-                        FROM Post_Job_Review NATURAL JOIN Job_Review
-                        WHERE(Post_Job_Review.AccountID = ".$_SESSION['accountID'].")";
-                        if($result_job_rev = mysqli_query($conn,$stmt_job_reviews)){
-                          $num_of_job_reviews = mysqli_num_rows($result_job_rev);
-                          printf("Select returned %d rows.\n", $num_of_job_reviews);
-                        } 
-                        else{
-                          printf("Error in Post Job Review");
+                    <?php
+                        if($account_type == "Reviewer"){
 
-                        }
-                        $stmt_interview_reviews ="SELECT *
-                        FROM Post_Interview_Review NATURAL JOIN Interview_Review
-                        WHERE(Post_Interview_Review.AccountID = ".$_SESSION['accountID'].")";
+                          // if reviewer get number of job reviews
+                          $stmt_rev_post = "SELECT *
+                          FROM Post_Job_Review NATURAL JOIN Post
+                          WHERE(Post_Job_Review.AccountID =".$_SESSION['accountID'].") 
+                          UNION 
+                          SELECT *
+                          FROM Post_Interview_Review NATURAL JOIN Post
+                          WHERE(Post_Interview_Review.AccountID = ".$_SESSION['accountID'].")";
 
-                        if($result_int_rev = mysqli_query($conn,$stmt_interview_reviews)){
-                          $num_of_interview_reviews = mysqli_num_rows($result_int_rev);
-                          printf("Select returned %d rows.\n", $num_of_interview_reviews);
+                          if($result_post = mysqli_query($conn,$stmt_rev_post)){
+                            $num_of_rev_post= mysqli_num_rows($result_post);
+                            //printf("Select returned %d rows.\n", $num_of_job_reviews);
+                          } 
+                          else{
+                            printf("Error in Post Job Review");
+                          }
+                          if( $num_of_rev_post== 0)
+                          {
+                            echo "No Reviews were found";
+                          }
                         }
-                        else{
-                          printf("Error in Post Interview Review");
-                        }
-                        if(($num_of_job_reviews + $num_of_interview_reviews) == 0)
+                        elseif ($account_type == "Representative") 
                         {
-                          echo "No Reviews were found";
-                        }
-                        if(mysqli_num_rows($result_job_rev) > 0 ){
-                          while($row = mysqli_fetch_assoc($result_job_rev)) {
-                            $sql = "SELECT * FROM Review WHERE PostID=" . $row['PostID'];
-                            $result = mysqli_query($conn, $sql);
-                            $row_ = mysqli_fetch_assoc($result);
-                            $sql_post = "SELECT * FROM Post WHERE PostID=" . $row['PostID'];
-                            $result_post = mysqli_query($conn, $sql_post);
-                            $row_p = mysqli_fetch_assoc($result_post);
+                          // if representative get number of posts to their company
+                          $stmt_post ="SELECT *
+                          FROM Post
+                          WHERE(CompanyID = ".$_SESSION['companyID'].")";
 
+                          if($result_post= mysqli_query($conn,$stmt_post)){
+                            $num_of_posts = mysqli_num_rows($result_post);
+                            //printf("Select returned %d rows.\n", $num_of_job_reviews);
+                          } 
+                          else{
+                            printf("Error in Review");
+                          }
+                          if($num_of_posts == 0){
+                            echo "No Posts About Your Company were found";
+                          }
+                          else{
+                            printf("Error in Post Interview Review");
+                          }
+                      	}
+                        while($row = mysqli_fetch_assoc($result_post)) 
+                        {
+                          $stmt_interview_reviews ="SELECT *
+                          FROM Review
+                          WHERE(PostID = ".$row['PostID'].")";
+                          $res_rew = mysqli_query($conn,$res_rew);
+                          $row_rew = mysqli_fetch_assoc($res_rew);
+
+                          if(mysqli_num_rows($res_rew) > 0){
+                            $sql_jb = "SELECT * FROM Job_Review WHERE PostID=" . $row['PostID'];
+                            $result_jb = mysqli_query($conn, $sql_jb);
+                            if(mysqli_num_rows($result_jb) >=0){
+                               $row_ = mysqli_fetch_assoc($result_jb);
+                               $type = "jb";
+                            }
+                            else{
+                              $sql_int = "SELECT * FROM Interview_Review WHERE PostID=" . $row['PostID'];
+                              $result_int = mysqli_query($conn, $sql_int);
+                              $row_ = mysqli_fetch_assoc($result_int);
+                              $type = "int";
+                            }
                             echo '
-                            <h5 class="card-title">Review for -company name-</h5>
-                            <div class="card text-center">
-                              <div class="card-header"> 
-                                <ul class="nav nav-tabs card-header-tabs">
-                                  <li class="nav-item">
-                                   <a class="nav-link active" id="rating-tab" data-toggle="tab" href="#rating" role="tab" aria-controls="rating" aria-selected="true">Rating</a>
-                                  </li>
-                                  <li class="nav-item">
-                                   <a class="nav-link" id="pros-tab" data-toggle="tab" href="#pros" role="tab" aria-controls="pros" aria-selected="false">Pros</a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="cons" aria-selected="false">Cons</a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="comments" aria-selected="false">Comments</a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="cons" aria-selected="false">Cons</a>
-                                  </li>
-                                </ul>
-                              </div>
-                              <div class="card-body">
-                                <div class="tab-content" id="myTabContent">
-                                  <div class="tab-pane fade show active" id="rating"  role="tabpanel" aria-labelledby="rating-tab"> <h2>Overall Rating</h2>
-                                    <div class="star-ratings-css">';
-                                      $rating = $row_["Rating"]; 
-                                      for ($j=0; $j < 5; $j++) { 
-                                        if ($j < $rating) {
-                                          echo '<span class="fa fa-star checked"></span>';
-                                        }
-                                        else {
-                                          echo '<span class="fa fa-star"></span>';
-                                        }   
-                                      }
-                                      echo 
-                                    '</div>
-                                  </div>
-                                  <div class="tab-pane fade" id="pros" role="tabpanel" aria-labelledby="pros-tab">'.$row_["Pros"].'</div>
-                                  <div class="tab-pane fade" id="cons" role="tabpanel" aria-labelledby="cons-tab">'.$row_["Cons"].'</div>
-                                  <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">Comments</div>
-                                </div>
-                              </div>
-                            <div class="card-footer text">
-                            '.row_p['Creation_Date'].'
-                            </div>
-                          </div>';
+	                            <h5 class="card-title">Review for -company name-</h5>
+	                            <div class="card text-center">
+	                              <div class="card-header"> 
+	                                <ul class="nav nav-tabs card-header-tabs">
+	                                  <li class="nav-item">
+	                                   <a class="nav-link active" id="rating-tab" data-toggle="tab" href="#rating" role="tab" aria-controls="rating" aria-selected="true">Rating</a>
+	                                  </li>
+	                                  <li class="nav-item">
+	                                   <a class="nav-link" id="pros-tab" data-toggle="tab" href="#pros" role="tab" aria-controls="pros" aria-selected="false">Pros</a>
+	                                  </li>
+	                                  <li class="nav-item">
+	                                    <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="cons" aria-selected="false">Cons</a>
+	                                  </li>';
+	                                  if($type == "jb"){
+		                                  echo '<li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Workplace-tab" data-toggle="tab" href="#Comments_Workplace" role="tab" aria-controls="Comments_Workplace" aria-selected="false">Workplace Comments</a>
+		                                  </li>
+		                                  <li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Coworkers-tab" data-toggle="tab" href="#Comments_Coworkers" role="tab" aria-controls="Comments_Coworkers" aria-selected="false">Coworkers Comments</a>
+		                                  </li>
+		                                  <li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Management-tab" data-toggle="tab" href="#Comments_Management" role="tab" aria-controls="Comments_Management" aria-selected="false">Management Comments</a>
+		                                  </li>';
+		                              }
+		                              else
+		                              {
+		                              	echo '<li class="nav-item">
+		                                    <a class="nav-link" id="questions-tab" data-toggle="tab" href="#questions" role="tab" aria-controls="questions" aria-selected="false">Questions</a>
+		                                  </li>';
+		                              }
+	                                echo '</ul>
+	                              </div>
+	                              <div class="card-body">
+	                                <div class="tab-content" id="myTabContent">
+	                                  <div class="tab-pane fade show active" id="rating"  role="tabpanel" aria-labelledby="rating-tab"> <h2>Overall Rating</h2>
+	                                    <div class="star-ratings-css">';
+	                                      $rating = $row_rew["Rating"]; 
+	                                      for ($j=0; $j < 5; $j++) { 
+	                                        if ($j < $rating) {
+	                                          echo '<span class="fa fa-star checked"></span>';
+	                                        }
+	                                        else {
+	                                          echo '<span class="fa fa-star"></span>';
+	                                        }    
+	                                      }
+	                                      echo 
+	                                    '</div>
+	                                  </div>
+	                                  <div class="tab-pane fade" id="pros" role="tabpanel" aria-labelledby="pros-tab">'.$row_rew["Pros"].'</div>
+	                                  <div class="tab-pane fade" id="cons" role="tabpanel" aria-labelledby="cons-tab">'.$row_rew["Cons"].'</div>';
+	                                  if($type == "jb"){
+	                                  	echo '<div class="tab-pane fade" id="Comments_Workplace" role="tabpanel" aria-labelledby="Comments_Workplace-tab">'
+	                                  		$row_['Comments_Workplace']
+	                                  	'</div>';
+	                                  	echo '<div class="tab-pane fade" id="Comments_Coworkers" role="tabpanel" aria-labelledby="Comments_Coworkers-tab">'
+	                                  		$row_['Comments_Coworkers']
+	                                  	'</div>';
+	                                  	echo '<div class="tab-pane fade" id="Comments_Management" role="tabpanel" aria-labelledby="Comments_Management-tab">'
+	                                  		$row_['Comments_Management']
+	                                  	'</div>';
+	                                  }
+	                                  else{
+	                                  	// Get questions using has
+	                                  	echo '<div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">Questions</div>';
+	                                  }
+	                                echo '</div>
+	                              </div>
+	                            <div class="card-footer text">
+	                            '.$row['Creation_Date'].'
+	                            </div>
+	                          </div>';    	
                           }
                         }
                       ?>

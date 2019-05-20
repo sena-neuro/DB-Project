@@ -75,6 +75,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 				header("Location: ".$prevLoc."?error=NoCompany");
 				exit();
 			}
+			$companyID = $row['CompanyID'];
 		}
 	}
 	// insert into account
@@ -93,15 +94,26 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 	if(isset($_POST['signUpSubmitRepresentative'])){
 		// If the account is  a representative account Insert into representative table
 
-		$sql = "INSERT INTO Comp_Rep(AccountID, Branch, Contact_Info, Job_Title)
-		VALUES (?, ?, ?, ?)";
+		$sql = "INSERT INTO Comp_Rep(AccountID, CompanyID, Branch, Contact_Info, Job_Title)
+		VALUES (?,?, ?, ?, ?)";
 		$stmt = mysqli_stmt_init($conn);
 		if(!mysqli_stmt_prepare($stmt,$sql)){
 			header("Location: ".$prevLoc."?error=sqlerrorRepInsert");
 			exit();
 		}
-		mysqli_stmt_bind_param($stmt,"isss",$accountID, $branch,$contact_info,$jobTitle);
+		mysqli_stmt_bind_param($stmt,"iisss",$accountID, $companyID ,$branch,$contact_info,$jobTitle);
 		$res = mysqli_stmt_execute($stmt);
+		$_SESSION['companyID'] = $companyID;
+	}
+	elseif (isset($_POST[''])) {
+				sql_us = "INSERT INTO User(AccountID) VALUES (?)";
+		$stmt_us = mysqli_stmt_init($conn);
+		if(!mysqli_stmt_prepare($stmt_us,$sql_us)){
+			header("Location: ".$prevLoc."?error=sqlerrorUserInsert");
+			exit();
+		}
+		mysqli_stmt_bind_param($stmt_us,"i",$accountID);
+		$res = mysqli_stmt_execute($stmt_us);
 	}		
 	session_start();
 	$_SESSION['uname'] = $uname;
