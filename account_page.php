@@ -35,7 +35,7 @@
                 FROM Company
                 WHERE Name LIKE ?';
                 
-      $stmt = mysqli_stmt_init($sql_conn);
+      $stmt = mysqli_stmt_init($conn);
       
       if(!mysqli_stmt_prepare($stmt, $query)){
           echo("Error description: " . mysqli_error($conn));
@@ -134,7 +134,7 @@
                 span.innerHTML = "Please select a company from the list*";   
 
                 if ($('.dropdown').find('.dropdown-menu').is(":visible")){
-                    $('.dropdown-toggle').dropdown('toggle');
+                    $('#search-bar-dropdown').hide();
                 }
                 event.preventDefault();
                 
@@ -154,8 +154,8 @@
         function inputReceived(searchbar) {
             curId = -1;
             
-            if ($('.dropdown').find('.dropdown-menu').is(":hidden")){
-                $('.dropdown-toggle').dropdown('toggle');
+            if ($('#search-bar-dropdown').is(":hidden")){
+                $('#search-bar-dropdown').show();
             }
             
             if (searchbar.value != "") {
@@ -180,10 +180,9 @@
                                 searchbar.value = li.innerHTML;
                                 curId = results[i][0];
                                 
-                                if ($('.dropdown').find('.dropdown-menu').is(":visible")){
-                                    $('.dropdown-toggle').dropdown('toggle');
+                                if ($('#search-bar-dropdown').is(":visible")){
+                                    $('#search-bar-dropdown').hide();
                                 }
-                                
                                 searchbar.focus();
                             };
                             dropdown.appendChild(li);
@@ -230,7 +229,7 @@
     </header>
     <section id="about">
     	<div class="container">
-      	<div class="row"> <div class="col-5"> <h2>Welcome <?php echo $_SESSION['uname']?></h2> </div> </div>
+      	<div class="row"> <div class="col-5"> <h2>Welcome <?php echo $_SESSION['fname'] . " " . $_SESSION['lname']; ?></h2> </div> </div>
   	  </div>
       <div class="container">
         <div class="row">

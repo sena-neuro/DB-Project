@@ -1,7 +1,9 @@
 <?php
     session_start();
     
-    include("dbconfig.php");
+    include("db_config.php");
+    $sql_conn = Connect();
+    
     if (isset($_POST["cid"])) {
         $comp_id = $_POST["cid"];
     }
