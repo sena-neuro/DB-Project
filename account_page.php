@@ -368,7 +368,7 @@
                             echo "No Reviews were found";
                           }
                         }
-                        elseif ($account_type == "Representative") 
+                        elseif ($account_type == "Company Representative") 
                         {
                           // if representative get number of posts to their company
                           $stmt_post ="SELECT *
@@ -479,8 +479,13 @@
 	                                echo '</div>
 	                              </div>
 	                            <div class="card-footer text">
-	                            '.$row['Creation_Date'].'
-	                            </div>
+	                            '.$row['Creation_Date'].
+	                            if($account_type == "Company Representative"){
+	                            	echo '<form id="removal_request">
+	                            					<input type="submit" value="Requrest Removal" />
+																			</form>'
+	                            }
+	                            '</div>
 	                          </div>';    	
                           }
                         }
@@ -543,32 +548,5 @@
 
     <!-- Template Main Javascript File -->
     <script src="js/main.js"></script>
-
-    <!-- For datepicker-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-    
-    <script type="text/javascript">
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.css');
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.css');
-      .datepicker table tr td.disabled,
-      .datepicker table tr td.disabled:hover {
-        color: #b90000;
-      }
-    </script>
-    <script type="text/javascript">
-      $.fn.datepicker.dates.en.titleFormat="MM";
-        $(document).ready(function(){
-            var date_input=$('input[name="start-date"]'); 
-            date_input.datepicker({
-              format: 'dd-mm',
-              autoclose: true,
-              startView: 1,
-              maxViewMode: "months",
-              orientation: "bottom left",
-            })
-          });
-        $('#datepicker').datepicker("setDate", new Date());
-    </script>
+</script>
 </html>
