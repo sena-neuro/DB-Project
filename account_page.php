@@ -28,37 +28,35 @@
     header("Location: index.php");
   }
   
-    
-    include("dbconfig.php");
-    if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
-        $searchval = $_POST["searched"];
-        $searchval = "%" . $searchval . "%";
-        $query = 'SELECT CompanyID, Name
-                  FROM Company
-                  WHERE Name LIKE ?';
-                  
-        $stmt = mysqli_stmt_init($sql_conn);
-        
-        if(!mysqli_stmt_prepare($stmt, $query)){
-            echo("Error description: " . mysqli_error($conn));
-            header("Location: index.php?error=sqlerror");
-            exit();
-        }
-        
-        mysqli_stmt_bind_param($stmt, 's', $searchval);
-		mysqli_stmt_execute($stmt);
-		$result = mysqli_stmt_get_result($stmt);
-        
-        $matching_companies = [];
-        if ($result->num_rows > 0) {
-            while($row = mysqli_fetch_assoc($result)) {
-                array_push($matching_companies, array($row["CompanyID"], $row["Name"]));
-            }
-        }
-        
-        echo json_encode($matching_companies);
-        exit();
-    }
+  if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
+      $searchval = $_POST["searched"];
+      $searchval = "%" . $searchval . "%";
+      $query = 'SELECT CompanyID, Name
+                FROM Company
+                WHERE Name LIKE ?';
+                
+      $stmt = mysqli_stmt_init($sql_conn);
+      
+      if(!mysqli_stmt_prepare($stmt, $query)){
+          echo("Error description: " . mysqli_error($conn));
+          header("Location: index.php?error=sqlerror");
+          exit();
+      }
+      
+      mysqli_stmt_bind_param($stmt, 's', $searchval);
+	mysqli_stmt_execute($stmt);
+	$result = mysqli_stmt_get_result($stmt);
+      
+      $matching_companies = [];
+      if ($result->num_rows > 0) {
+          while($row = mysqli_fetch_assoc($result)) {
+              array_push($matching_companies, array($row["CompanyID"], $row["Name"]));
+          }
+      }
+      
+      echo json_encode($matching_companies);
+      exit();
+  }
 ?>
 <html>
   <head>
@@ -239,7 +237,7 @@
           <div class="col-3">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
               <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">General Information</a>
-              <a class="nav-link" id="v-pills-qualifications-tab" data-toggle="pill" href="#v-pills-qualifications" role="tab" aria-controls="v-pills-profile" aria-selected="false">Qualifications</a>
+              <a class="nav-link" id="v-pills-employment-tab" data-toggle="pill" href="#v-pills-employment" role="tab" aria-controls="v-pills-employment" aria-selected="false">Employment Details</a>
               <a class="nav-link" id="v-pills-reviews-tab" data-toggle="pill" href="#v-pills-reviews" role="tab" aria-controls="v-pills-reviews" aria-selected="false">Reviews</a>
               <a class="nav-link" id="v-pills-applications-tab" data-toggle="pill" href="#v-pills-applications" role="tab" aria-controls="v-pills-applications" aria-selected="false">Applications</a>
               <a class="nav-link" id="v-pills-notifications-tab" data-toggle="pill" href="#v-pills-notifications" role="tab" aria-controls="v-pills-notifications" aria-selected="false">Notifications</a>
@@ -259,9 +257,28 @@
                     </div>
                     <div class="col-lg-7 col-md-6">
                       <div class="about-content">
+                        <?php
+                          $bd_query = "SELECT * FROM Account WHERE AccountID=".$_SESSION['accountID'];
+                          $bd_res = mysqli_query($conn, $bd_query);
+                          if (mysqli_num_rows($bd_res) > 0) {
+                            // output data of each row
+                            while($row = mysqli_fetch_assoc($bd_res)) {
+                                
+                              $bdate = $row['Birthdate'];
+                              $age = date_diff(date_create($bdate), date_create('now'))->y;
+                            }
+                          } else {
+                            $age = "Not stated";
+                          }
+                          $experience_sql = "WITH Difference AS ( SELECT (End_Date - Start_Date) as Diff 
+                                            FROM Work_For
+                                            WHERE AccountID = ".$_SESSION['accountID'].")
+                                            SELECT SUM(Diff)
+                                            FROM Difference";
+                          // ADD LATER
+                        ?>
                         <h2>General Information</h2>
-                        <h5>Age: </h5>
-                        <h5>Gender: </h5>
+                        <h5>Age: <?php echo $age?></h5>
                         <h5>Experience: </h5>
                         <h5>Account Type: <?php echo $account_type?></h5>
                       </div>
@@ -269,14 +286,15 @@
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade" id="v-pills-qualifications" role="tabpanel" aria-labelledby="v-pills-qualifications-tab">
-  	            <div class="container">
-  	              <div class="row">
-  	                <div class="col-lg-7 col-md-6">
-  	                  <h2>Qualifications</h2>
-  	                </div>
-  	              </div>
-  	            </div>
+
+              <div class="tab-pane fade" id="v-pills-employment" role="tabpanel" aria-labelledby="v-pills-employment-tab">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-lg-7 col-md-6">
+                      <h2>Employment Details</h2>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div class="tab-pane fade" id="v-pills-reviews" role="tabpanel" aria-labelledby="v-pills-reviews-tab">
