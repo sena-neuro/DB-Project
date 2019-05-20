@@ -307,7 +307,7 @@
                             <div class="card-body">
                               <h5 class="card-title">You can add your previous employments from here.</h5>
                               <p class="card-text">Please keep in mind that your data will be shared publicly.</p>
-                              <form>
+                              <form action="employment_action.php" method="post" role="form">
                                 <div class="form-group">
                                   <label>Job Title</label>
                                   <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" aria-describedby="basic-addon1">
@@ -338,7 +338,7 @@
                                   <label>Location</label>
                                   <input type="text" class="form-control" placeholder="San Francisco, CA" aria-label="location" aria-describedby="basic-addon1">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-primary" name="employment-submit">Submit</button>
                               </form>
                             </div>
                           </div>
