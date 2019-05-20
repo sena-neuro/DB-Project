@@ -17,7 +17,7 @@
       mysqli_stmt_execute($stmt_u);
       $res = mysqli_stmt_get_result($stmt_u);
       if($row = mysqli_fetch_assoc($res)){
-        $account_type="Representative";
+        $account_type="Company Representative";
         exit();
       }
       else
@@ -27,6 +27,38 @@
   else{
     header("Location: index.php");
   }
+  
+    
+    //include("dbconfig.php");
+    if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
+        $searchval = $_POST["searched"];
+        $searchval = "%" . $searchval . "%";
+        $query = 'SELECT CompanyID, Name
+                  FROM Company
+                  WHERE Name LIKE ?';
+                  
+        $stmt = mysqli_stmt_init($sql_conn);
+        
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            echo("Error description: " . mysqli_error($conn));
+            header("Location: index.php?error=sqlerror");
+            exit();
+        }
+        
+        mysqli_stmt_bind_param($stmt, 's', $searchval);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+        
+        $matching_companies = [];
+        if ($result->num_rows > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+                array_push($matching_companies, array($row["CompanyID"], $row["Name"]));
+            }
+        }
+        
+        echo json_encode($matching_companies);
+        exit();
+    }
 ?>
 <html>
   <head>
@@ -59,7 +91,13 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <style> 
         .checked {
-          color: orange;
+            color: orange;
+        }
+        
+        .scrollable-menu {
+            height: auto;
+            max-height: 300px;
+            overflow-x: hidden;
         }
       </style>
     </head>
@@ -74,6 +112,89 @@
           <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
           <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
         </div>
+        
+      <div class="input-group mb-3" style="display:inline-block; width: 400px;">
+        <div class="dropdown">
+            <form method="post" action="company_page.php" onsubmit="submitted(event);">
+                <input type="text" autocomplete="off" oninput="inputReceived(this);" id="search-bar" class="form-control dropdown-toggle" data-toggle="dropdown" size="50" placeholder="Search a company" name="search-bar" style="display: inline-block; width: 400px; margin-left:50px;">
+                <ul id="search-bar-dropdown" class="dropdown-menu scrollable-menu" style="padding-left: 15px; padding-right: 15px">
+                </ul>
+                <span id="errorSpanSearchBar" style="color: red; margin-left: 55px;"></span>
+                <input type="hidden" name="cid" id="hiddenCompanyId" value="">
+            </form>
+        </div>
+      </div>
+      
+      <script>
+        var curId = -1;
+        
+        function submitted(event) {
+            console.log(curId);
+            
+            var span = document.getElementById("errorSpanSearchBar");
+            if (curId == -1) {
+                span.innerHTML = "Please select a company from the list*";   
+
+                if ($('.dropdown').find('.dropdown-menu').is(":visible")){
+                    $('.dropdown-toggle').dropdown('toggle');
+                }
+                event.preventDefault();
+                
+            } else {
+                span.innerHTML = "";
+                
+                var hiddenCompanyId = document.getElementById("hiddenCompanyId");
+                hiddenCompanyId.value = curId;
+                
+                /*var url = window.location.href;
+                url = url.substring(0, url.lastIndexOf("/"));
+                url = url + "/company_page.php?id=" + curId;
+                window.location = url;*/
+            }
+        }
+        
+        function inputReceived(searchbar) {
+            curId = -1;
+            
+            if ($('.dropdown').find('.dropdown-menu').is(":hidden")){
+                $('.dropdown-toggle').dropdown('toggle');
+            }
+            
+            if (searchbar.value != "") {
+                dropdown = document.getElementById("search-bar-dropdown");
+                while(dropdown.firstChild) {
+                    dropdown.removeChild(dropdown.firstChild);
+                }
+                
+                var url = window.location.href;
+                url = url.substring(url.lastIndexOf("/")+1);
+                
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {searched: searchbar.value},
+                    success: function(res) {
+                        results = JSON.parse(res);
+                        for (let i = 0; i < results.length; i++) {          
+                            let li = document.createElement("li");
+                            li.innerHTML = results[i][1];
+                            li.onclick = function() {
+                                searchbar.value = li.innerHTML;
+                                curId = results[i][0];
+                                
+                                if ($('.dropdown').find('.dropdown-menu').is(":visible")){
+                                    $('.dropdown-toggle').dropdown('toggle');
+                                }
+                                
+                                searchbar.focus();
+                            };
+                            dropdown.appendChild(li);
+                        }
+                    }
+                });
+            }
+        }
+      </script>
 
              <nav class="main-nav float-right d-none d-lg-block">
           <ul>
