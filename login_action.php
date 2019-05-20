@@ -23,7 +23,7 @@ if(isset($_POST['login-submit'])){
                 $_SESSION['fname'] = $row['Name_first_name'];
                 $_SESSION['lname'] = $row['Name_second_name'];
 				$_SESSION['uname'] = $row['Username'];
-				$_SESSION['accountID'] = $accountID;
+				$_SESSION['accountID'] = $row['AccountID'];
 				header("Location: account_page.php");
 				exit();
 			}

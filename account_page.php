@@ -107,7 +107,7 @@
 
         <div class="logo float-left">
           <!-- Uncomment below if you prefer to use an image logo -->
-          <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
+          <h1 class="text-light"><a href="index.php" class="scrollto"><span>CIERP</span></a></h1>
           <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
         </div>
         
@@ -209,7 +209,6 @@
             <?php if(isset($_SESSION['accountID']))
             {
               echo'<li><a href="logOut.php">Log Out</a></li>';
-             
             }
             else{
             echo'
@@ -298,6 +297,7 @@
                             <h2 class="mb-0">
                               <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Add previous employment
+
                               </button>
                             </h2>
                           </div>
@@ -309,24 +309,40 @@
                               <form action="employment_action.php" method="post" role="form">
                                 <div class="form-group">
                                   <label>Job Title</label>
-                                  <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" aria-describedby="basic-addon1">
+                                  <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" name="job_title" aria-describedby="basic-addon1">
+                                </div>
+                                <div class="form-group">
+                                  <label>Company</label>
+                                  <select class="form-control" id="companySelect" name="company">
+                                    <?php  
+                                      $company_query = "SELECT Name From Company";
+                                      $comp_res = mysqli_query($conn,$company_query);
+                                      if (mysqli_num_rows($comp_res) > 0) {
+                                        // output data of each row
+                                        while($row = mysqli_fetch_assoc($comp_res)) {
+                                          echo "<option>".$row["Name"]."</option>";
+                                        }
+                                      }
+                                    ?>
+                                    
+                                  <select>
                                 </div>
                                 <div class="form-group">
                                   <label>Start Date</label>
-                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
+                                  <input class="form-control" type="start-date" value="2011-08-19" name="sdate" id="example-date-input">
                                 </div>
                                 <div class="form-group">
                                   <label>End Date</label>
-                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
+                                  <input class="form-control" type="start-date" value="2011-08-19" name="edate" id="example-date-input">
                                 </div>
                                 <label>Monthly Salary</label>
                                 <div class="form-row" role="group">
                                   <div class="form-group col-10">
-                                    <input type="number" class="form-control" placeholder="5000" id="salary">
+                                    <input type="number" class="form-control" placeholder="5000" name="salary" id="salary">
                                   </div>
                                   
                                   <div class="form-group col">
-                                    <select class="form-control" id="currency-select">
+                                    <select class="form-control" name="currency" id="currency-select">
                                       <option>$</option>
                                       <option>€</option>
                                       <option>TL</option>
@@ -336,7 +352,7 @@
                                 </div>
                                 <div class="form-group">
                                   <label>Location</label>
-                                  <input type="text" class="form-control" placeholder="San Francisco, CA" aria-label="location" aria-describedby="basic-addon1">
+                                  <input type="text" class="form-control" placeholder="San Francisco, CA" name="location" aria-label="location" aria-describedby="basic-addon1">
                                 </div>
                                 <button type="submit" class="btn btn-primary" name="employment-submit">Submit</button>
                               </form>
@@ -354,7 +370,31 @@
                           </div>
                           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                             <div class="card-body">
-                              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                              
+                              <div class="container">
+                                <div class="row">
+                                  <?php 
+                                  $comp_sql = "SELECT * FROM Work_For WHERE AccountID=".$_SESSION['accountID'];
+                                  $comp_result = mysqli_query($conn, $comp_sql);
+                                  if(mysqli_num_rows($comp_result) > 0) {
+                                    while($comp_row = mysqli_fetch_assoc($comp_result)) {
+                                      $comp_name_sql = "SELECT * FROM Company WHERE CompanyID=".$comp_row['CompanyID'];
+                                      $comp_name_result = mysqli_query($conn, $comp_name_sql);
+                                      $comp_name_row = mysqli_fetch_assoc($comp_name_result);
+                                      echo "<div class='col'>Company Name</div>
+                                           <div class='col'>Start Date</div>
+                                           <div class='col'>End Date</div>
+                                          <div class='w-100'></div>
+                                          <div class='col'>".$comp_name_row['Name']."</div>
+                                          <div class='col'>".$comp_row['Start_Date']."</div>
+                                          <div class='col'>".$comp_row['End_Date']."</div>";
+                                    }
+                                  } else {
+                                    echo "No previous employment";
+                                  } 
+                                  ?>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
