@@ -116,6 +116,8 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 		$res = mysqli_stmt_execute($stmt_us);
 	}		
 	session_start();
+    $_SESSION['fname'] = $first_name;
+    $_SESSION['lname'] = $last_name;
 	$_SESSION['uname'] = $uname;
 	$_SESSION['accountID'] = $accountID;
 	header("Location: account_page.php");
