@@ -105,7 +105,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 		$res = mysqli_stmt_execute($stmt);
 		$_SESSION['companyID'] = $companyID;
 	}
-	elseif (isset($_POST[''])) {
+	elseif (isset($_POST['signUpSubmitReviewer'])) {
 		$sql_us = "INSERT INTO User(AccountID) VALUES (?)";
 		$stmt_us = mysqli_stmt_init($conn);
 		if(!mysqli_stmt_prepare($stmt_us,$sql_us)){
