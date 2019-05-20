@@ -290,8 +290,51 @@
               <div class="tab-pane fade" id="v-pills-employment" role="tabpanel" aria-labelledby="v-pills-employment-tab">
                 <div class="container">
                   <div class="row">
-                    <div class="col-lg-7 col-md-6">
+                    <div class="col-lg-10 col-md-6">
                       <h2>Employment Details</h2>
+
+                      <div class="accordion" id="accordionExample">
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Add previous employment
+                              </button>
+                            </h2>
+                          </div>
+
+                          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                              <h5 class="card-title">You can add your previous employments from here.</h5>
+                              <p class="card-text">Please keep in mind that your data will be shared publicly.</p>
+                              <form>
+                                <div class="form-group">
+                                  <input type="text" class="form-control" placeholder="Job Title" aria-label="Job Title" aria-describedby="basic-addon1">
+
+                                </div>
+                                <div class="form-group">
+                                  <input type="text" class="form-control" name="start-date" id="start-date" />
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <!---------------------------------------------------------------------------------------->
+                        <div class="card">
+                          <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Old Employments
+                              </button>
+                            </h2>
+                          </div>
+                          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                            <div class="card-body">
+                              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -442,4 +485,34 @@
 
     <!-- Template Main Javascript File -->
     <script src="js/main.js"></script>
+
+    <!-- For datepicker-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    
+    <script type="text/javascript">
+      @import url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.css');
+      @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.css');
+      .datepicker table tr td.disabled,
+      .datepicker table tr td.disabled:hover {
+        color: #b90000;
+      }
+    </script>
+    <script type="text/javascript">
+      $.fn.datepicker.dates.en.titleFormat="MM";
+        $(document).ready(function(){
+            var date_input=$('input[name="start-date"]'); 
+            date_input.datepicker({
+              format: 'dd-mm',
+              autoclose: true,
+              startView: 1,
+              maxViewMode: "months",
+              orientation: "bottom left",
+            })
+          });
+        $('#datepicker').datepicker("setDate", new Date());
+      
+    </script>
+        
 </html>
