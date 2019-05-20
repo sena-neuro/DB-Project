@@ -113,7 +113,7 @@ if(isset($_GET['error'])){
             </div>
             <div class="form-group">
               <label for="bdate"><br>Birth Date</br></label>
-              <input type="date" placeholder="your birth date" name="bdate" >
+              <input type="date" placeholder="your birth date" value="1990-01-01" name="bdate" >
             </div>
               <label for="inputPassword" >Password</label>
               <div class="form-group col-sm-6">

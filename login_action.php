@@ -15,10 +15,11 @@ if(isset($_POST['login-submit'])){
 		mysqli_stmt_bind_param($stmt,"ss",$email_or_uname,$email_or_uname);
 		mysqli_stmt_execute($stmt);
 		$res = mysqli_stmt_get_result($stmt);
-		if($row = mysqli_fetch_assoc($res)){
+		if($row = mysqli_fetch_assoc($res))
+		{
 			$passCheck = password_verify($pass, $row['Password']);
-			if($passCheck==true){
-				$accountID = mysqli_insert_id($conn);
+			if($passCheck==true)
+			{
 				session_start();
                 $_SESSION['fname'] = $row['Name_first_name'];
                 $_SESSION['lname'] = $row['Name_second_name'];
@@ -27,8 +28,8 @@ if(isset($_POST['login-submit'])){
 				$stmt_rep ="SELECT *
                           FROM Represents 
                           WHERE AccountID = ".$row['AccountID'];
-                          if($result_post = mysqli_query($conn,$stmt_post)){
-                            	$row = mysqli_fetch_assoc($result_post))
+                          if($result_rep = mysqli_query($conn,$stmt_rep)){
+                            	$row = mysqli_fetch_assoc($result_rep);
                             	$_SESSION['companyID'] = $row['CompanyID'];
                           } 
                           else{
@@ -40,8 +41,7 @@ if(isset($_POST['login-submit'])){
 			else{
 				header("Location: login.php?error=password");
 				exit();
-			} 
-			
+			} 	
 		}
 		else
 		{

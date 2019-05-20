@@ -103,9 +103,16 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 		}
 		mysqli_stmt_bind_param($stmt,"isss",$accountID,$branch,$contact_info,$jobTitle);
 		$res = mysqli_stmt_execute($stmt);
-		$stmt_rep ="INSERT INTO Represents(AccountID,CompanyID)
-                    VALUES (".$row['AccountID'].",".$companyID.")";
-				  $stmt_rep = mysqli_query($conn,$stmt_post);
+
+		$sqlrepr = "INSERT INTO Represents(AccountID,CompanyID)
+        VALUES (?, ?)";
+		$stmtrepr = mysqli_stmt_init($conn);
+		if(!mysqli_stmt_prepare($stmtrepr,$sqlrepr)){
+			header("Location: ".$prevLoc."?error=sqlerrorRepsInsert");
+			exit();
+		}
+		mysqli_stmt_bind_param($stmtrepr,"ii",$accountID,$companyID);
+		$resrepr = mysqli_stmt_execute($stmtrepr);
 	}
 	elseif (isset($_POST['signUpSubmitReviewer'])) {
 		$sql_us = "INSERT INTO User(AccountID) VALUES (?)";
