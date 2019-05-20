@@ -20,7 +20,9 @@ if(isset($_POST['login-submit'])){
 			if($passCheck==true){
 				$accountID = mysqli_insert_id($conn);
 				session_start();
-				$_SESSION['uname'] = $uname;
+                $_SESSION['fname'] = $row['Name_first_name'];
+                $_SESSION['lname'] = $row['Name_second_name'];
+				$_SESSION['uname'] = $row['Username'];
 				$_SESSION['accountID'] = $accountID;
 				header("Location: account_page.php");
 				exit();

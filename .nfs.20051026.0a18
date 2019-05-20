@@ -28,35 +28,37 @@
     header("Location: index.php");
   }
   
-  if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
-      $searchval = $_POST["searched"];
-      $searchval = "%" . $searchval . "%";
-      $query = 'SELECT CompanyID, Name
-                FROM Company
-                WHERE Name LIKE ?';
-                
-      $stmt = mysqli_stmt_init($conn);
-      
-      if(!mysqli_stmt_prepare($stmt, $query)){
-          echo("Error description: " . mysqli_error($conn));
-          header("Location: index.php?error=sqlerror");
-          exit();
-      }
-      
-      mysqli_stmt_bind_param($stmt, 's', $searchval);
-  mysqli_stmt_execute($stmt);
-  $result = mysqli_stmt_get_result($stmt);
-      
-      $matching_companies = [];
-      if ($result->num_rows > 0) {
-          while($row = mysqli_fetch_assoc($result)) {
-              array_push($matching_companies, array($row["CompanyID"], $row["Name"]));
-          }
-      }
-      
-      echo json_encode($matching_companies);
-      exit();
-  }
+    
+    //include("dbconfig.php");
+    if (isset($_POST["searched"]) && !empty($_POST["searched"])) {
+        $searchval = $_POST["searched"];
+        $searchval = "%" . $searchval . "%";
+        $query = 'SELECT CompanyID, Name
+                  FROM Company
+                  WHERE Name LIKE ?';
+                  
+        $stmt = mysqli_stmt_init($sql_conn);
+        
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            echo("Error description: " . mysqli_error($conn));
+            header("Location: index.php?error=sqlerror");
+            exit();
+        }
+        
+        mysqli_stmt_bind_param($stmt, 's', $searchval);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+        
+        $matching_companies = [];
+        if ($result->num_rows > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+                array_push($matching_companies, array($row["CompanyID"], $row["Name"]));
+            }
+        }
+        
+        echo json_encode($matching_companies);
+        exit();
+    }
 ?>
 <html>
   <head>
@@ -134,7 +136,7 @@
                 span.innerHTML = "Please select a company from the list*";   
 
                 if ($('.dropdown').find('.dropdown-menu').is(":visible")){
-                    $('#search-bar-dropdown').hide();
+                    $('.dropdown-toggle').dropdown('toggle');
                 }
                 event.preventDefault();
                 
@@ -154,8 +156,8 @@
         function inputReceived(searchbar) {
             curId = -1;
             
-            if ($('#search-bar-dropdown').is(":hidden")){
-                $('#search-bar-dropdown').show();
+            if ($('.dropdown').find('.dropdown-menu').is(":hidden")){
+                $('.dropdown-toggle').dropdown('toggle');
             }
             
             if (searchbar.value != "") {
@@ -180,9 +182,10 @@
                                 searchbar.value = li.innerHTML;
                                 curId = results[i][0];
                                 
-                                if ($('#search-bar-dropdown').is(":visible")){
-                                    $('#search-bar-dropdown').hide();
+                                if ($('.dropdown').find('.dropdown-menu').is(":visible")){
+                                    $('.dropdown-toggle').dropdown('toggle');
                                 }
+                                
                                 searchbar.focus();
                             };
                             dropdown.appendChild(li);
@@ -228,15 +231,15 @@
       </div>
     </header>
     <section id="about">
-      <div class="container">
-        <div class="row"> <div class="col-5"> <h2>Welcome <?php echo $_SESSION['fname'] . " " . $_SESSION['lname']; ?></h2> </div> </div>
-      </div>
+    	<div class="container">
+      	<div class="row"> <div class="col-5"> <h2>Welcome <?php echo $_SESSION['uname']?></h2> </div> </div>
+  	  </div>
       <div class="container">
         <div class="row">
           <div class="col-3">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
               <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">General Information</a>
-              <a class="nav-link" id="v-pills-employment-tab" data-toggle="pill" href="#v-pills-employment" role="tab" aria-controls="v-pills-employment" aria-selected="false">Employment Details</a>
+              <a class="nav-link" id="v-pills-qualifications-tab" data-toggle="pill" href="#v-pills-qualifications" role="tab" aria-controls="v-pills-profile" aria-selected="false">Qualifications</a>
               <a class="nav-link" id="v-pills-reviews-tab" data-toggle="pill" href="#v-pills-reviews" role="tab" aria-controls="v-pills-reviews" aria-selected="false">Reviews</a>
               <a class="nav-link" id="v-pills-applications-tab" data-toggle="pill" href="#v-pills-applications" role="tab" aria-controls="v-pills-applications" aria-selected="false">Applications</a>
               <a class="nav-link" id="v-pills-notifications-tab" data-toggle="pill" href="#v-pills-notifications" role="tab" aria-controls="v-pills-notifications" aria-selected="false">Notifications</a>
@@ -256,28 +259,9 @@
                     </div>
                     <div class="col-lg-7 col-md-6">
                       <div class="about-content">
-                        <?php
-                          $bd_query = "SELECT * FROM Account WHERE AccountID=".$_SESSION['accountID'];
-                          $bd_res = mysqli_query($conn, $bd_query);
-                          if (mysqli_num_rows($bd_res) > 0) {
-                            // output data of each row
-                            while($row = mysqli_fetch_assoc($bd_res)) {
-                                
-                              $bdate = $row['Birthdate'];
-                              $age = date_diff(date_create($bdate), date_create('now'))->y;
-                            }
-                          } else {
-                            $age = "Not stated";
-                          }
-                          $experience_sql = "WITH Difference AS ( SELECT (End_Date - Start_Date) as Diff 
-                                            FROM Work_For
-                                            WHERE AccountID = ".$_SESSION['accountID'].")
-                                            SELECT SUM(Diff)
-                                            FROM Difference";
-                          // ADD LATER
-                        ?>
                         <h2>General Information</h2>
-                        <h5>Age: <?php echo $age?></h5>
+                        <h5>Age: </h5>
+                        <h5>Gender: </h5>
                         <h5>Experience: </h5>
                         <h5>Account Type: <?php echo $account_type?></h5>
                       </div>
@@ -285,83 +269,14 @@
                   </div>
                 </div>
               </div>
-
-              <div class="tab-pane fade" id="v-pills-employment" role="tabpanel" aria-labelledby="v-pills-employment-tab">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-lg-10 col-md-6">
-                      <h2>Employment Details</h2>
-
-                      <div class="accordion" id="accordionExample">
-                        <div class="card">
-                          <div class="card-header" id="headingOne">
-                            <h2 class="mb-0">
-                              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Add previous employment
-                              </button>
-                            </h2>
-                          </div>
-
-                          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                              <h5 class="card-title">You can add your previous employments from here.</h5>
-                              <p class="card-text">Please keep in mind that your data will be shared publicly.</p>
-                              <form action="employment_action.php" method="post" role="form">
-                                <div class="form-group">
-                                  <label>Job Title</label>
-                                  <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" aria-describedby="basic-addon1">
-                                </div>
-                                <div class="form-group">
-                                  <label>Start Date</label>
-                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
-                                </div>
-                                <div class="form-group">
-                                  <label>End Date</label>
-                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
-                                </div>
-                                <label>Monthly Salary</label>
-                                <div class="form-row" role="group">
-                                  <div class="form-group col-10">
-                                    <input type="number" class="form-control" placeholder="5000" id="salary">
-                                  </div>
-                                  
-                                  <div class="form-group col">
-                                    <select class="form-control" id="currency-select">
-                                      <option>$</option>
-                                      <option>€</option>
-                                      <option>TL</option>
-                                    </select>
-                                  </div>
-
-                                </div>
-                                <div class="form-group">
-                                  <label>Location</label>
-                                  <input type="text" class="form-control" placeholder="San Francisco, CA" aria-label="location" aria-describedby="basic-addon1">
-                                </div>
-                                <button type="submit" class="btn btn-primary" name="employment-submit">Submit</button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                        <!---------------------------------------------------------------------------------------->
-                        <div class="card">
-                          <div class="card-header" id="headingTwo">
-                            <h2 class="mb-0">
-                              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Old Employments
-                              </button>
-                            </h2>
-                          </div>
-                          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                            <div class="card-body">
-                              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div class="tab-pane fade" id="v-pills-qualifications" role="tabpanel" aria-labelledby="v-pills-qualifications-tab">
+  	            <div class="container">
+  	              <div class="row">
+  	                <div class="col-lg-7 col-md-6">
+  	                  <h2>Qualifications</h2>
+  	                </div>
+  	              </div>
+  	            </div>
               </div>
 
               <div class="tab-pane fade" id="v-pills-reviews" role="tabpanel" aria-labelledby="v-pills-reviews-tab">
@@ -412,7 +327,7 @@
                           else{
                             printf("Error in Post Interview Review");
                           }
-                        }
+                      	}
                         while($row = mysqli_fetch_assoc($result_post)) 
                         {
                           $stmt_interview_reviews ="SELECT *
@@ -435,77 +350,77 @@
                               $type = "int";
                             }
                             echo '
-                              <h5 class="card-title">Review for -company name-</h5>
-                              <div class="card text-center">
-                                <div class="card-header"> 
-                                  <ul class="nav nav-tabs card-header-tabs">
-                                    <li class="nav-item">
-                                     <a class="nav-link active" id="rating-tab" data-toggle="tab" href="#rating" role="tab" aria-controls="rating" aria-selected="true">Rating</a>
-                                    </li>
-                                    <li class="nav-item">
-                                     <a class="nav-link" id="pros-tab" data-toggle="tab" href="#pros" role="tab" aria-controls="pros" aria-selected="false">Pros</a>
-                                    </li>
-                                    <li class="nav-item">
-                                      <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="cons" aria-selected="false">Cons</a>
-                                    </li>';
-                                    if($type == "jb"){
-                                      echo '<li class="nav-item">
-                                        <a class="nav-link" id="Comments_Workplace-tab" data-toggle="tab" href="#Comments_Workplace" role="tab" aria-controls="Comments_Workplace" aria-selected="false">Workplace Comments</a>
-                                      </li>
-                                      <li class="nav-item">
-                                        <a class="nav-link" id="Comments_Coworkers-tab" data-toggle="tab" href="#Comments_Coworkers" role="tab" aria-controls="Comments_Coworkers" aria-selected="false">Coworkers Comments</a>
-                                      </li>
-                                      <li class="nav-item">
-                                        <a class="nav-link" id="Comments_Management-tab" data-toggle="tab" href="#Comments_Management" role="tab" aria-controls="Comments_Management" aria-selected="false">Management Comments</a>
-                                      </li>';
-                                  }
-                                  else
-                                  {
-                                    echo '<li class="nav-item">
-                                        <a class="nav-link" id="questions-tab" data-toggle="tab" href="#questions" role="tab" aria-controls="questions" aria-selected="false">Questions</a>
-                                      </li>';
-                                  }
-                                  echo '</ul>
-                                </div>
-                                <div class="card-body">
-                                  <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="rating"  role="tabpanel" aria-labelledby="rating-tab"> <h2>Overall Rating</h2>
-                                      <div class="star-ratings-css">';
-                                        $rating = $row_rew["Rating"]; 
-                                        for ($j=0; $j < 5; $j++) { 
-                                          if ($j < $rating) {
-                                            echo '<span class="fa fa-star checked"></span>';
-                                          }
-                                          else {
-                                            echo '<span class="fa fa-star"></span>';
-                                          }    
-                                        }
-                                        echo 
-                                      '</div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pros" role="tabpanel" aria-labelledby="pros-tab">'.$row_rew["Pros"].'</div>
-                                    <div class="tab-pane fade" id="cons" role="tabpanel" aria-labelledby="cons-tab">'.$row_rew["Cons"].'</div>';
-                                    if($type == "jb"){
-                                      echo '<div class="tab-pane fade" id="Comments_Workplace" role="tabpanel" aria-labelledby="Comments_Workplace-tab">'
-                                        .$row_['Comments_Workplace'].
-                                      '</div>';
-                                      echo '<div class="tab-pane fade" id="Comments_Coworkers" role="tabpanel" aria-labelledby="Comments_Coworkers-tab">'
-                                        .$row_['Comments_Coworkers'].
-                                      '</div>';
-                                      echo '<div class="tab-pane fade" id="Comments_Management" role="tabpanel" aria-labelledby="Comments_Management-tab">'
-                                        .$row_['Comments_Management'].
-                                      '</div>';
-                                    }
-                                    else{
-                                      // Get questions using has
-                                      echo '<div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">Questions</div>';
-                                    }
-                                  echo '</div>
-                                </div>
-                              <div class="card-footer text">
-                              '.$row['Creation_Date'].'
-                              </div>
-                            </div>';      
+	                            <h5 class="card-title">Review for -company name-</h5>
+	                            <div class="card text-center">
+	                              <div class="card-header"> 
+	                                <ul class="nav nav-tabs card-header-tabs">
+	                                  <li class="nav-item">
+	                                   <a class="nav-link active" id="rating-tab" data-toggle="tab" href="#rating" role="tab" aria-controls="rating" aria-selected="true">Rating</a>
+	                                  </li>
+	                                  <li class="nav-item">
+	                                   <a class="nav-link" id="pros-tab" data-toggle="tab" href="#pros" role="tab" aria-controls="pros" aria-selected="false">Pros</a>
+	                                  </li>
+	                                  <li class="nav-item">
+	                                    <a class="nav-link" id="cons-tab" data-toggle="tab" href="#cons" role="tab" aria-controls="cons" aria-selected="false">Cons</a>
+	                                  </li>';
+	                                  if($type == "jb"){
+		                                  echo '<li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Workplace-tab" data-toggle="tab" href="#Comments_Workplace" role="tab" aria-controls="Comments_Workplace" aria-selected="false">Workplace Comments</a>
+		                                  </li>
+		                                  <li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Coworkers-tab" data-toggle="tab" href="#Comments_Coworkers" role="tab" aria-controls="Comments_Coworkers" aria-selected="false">Coworkers Comments</a>
+		                                  </li>
+		                                  <li class="nav-item">
+		                                    <a class="nav-link" id="Comments_Management-tab" data-toggle="tab" href="#Comments_Management" role="tab" aria-controls="Comments_Management" aria-selected="false">Management Comments</a>
+		                                  </li>';
+		                              }
+		                              else
+		                              {
+		                              	echo '<li class="nav-item">
+		                                    <a class="nav-link" id="questions-tab" data-toggle="tab" href="#questions" role="tab" aria-controls="questions" aria-selected="false">Questions</a>
+		                                  </li>';
+		                              }
+	                                echo '</ul>
+	                              </div>
+	                              <div class="card-body">
+	                                <div class="tab-content" id="myTabContent">
+	                                  <div class="tab-pane fade show active" id="rating"  role="tabpanel" aria-labelledby="rating-tab"> <h2>Overall Rating</h2>
+	                                    <div class="star-ratings-css">';
+	                                      $rating = $row_rew["Rating"]; 
+	                                      for ($j=0; $j < 5; $j++) { 
+	                                        if ($j < $rating) {
+	                                          echo '<span class="fa fa-star checked"></span>';
+	                                        }
+	                                        else {
+	                                          echo '<span class="fa fa-star"></span>';
+	                                        }    
+	                                      }
+	                                      echo 
+	                                    '</div>
+	                                  </div>
+	                                  <div class="tab-pane fade" id="pros" role="tabpanel" aria-labelledby="pros-tab">'.$row_rew["Pros"].'</div>
+	                                  <div class="tab-pane fade" id="cons" role="tabpanel" aria-labelledby="cons-tab">'.$row_rew["Cons"].'</div>';
+	                                  if($type == "jb"){
+	                                  	echo '<div class="tab-pane fade" id="Comments_Workplace" role="tabpanel" aria-labelledby="Comments_Workplace-tab">'
+	                                  		.$row_['Comments_Workplace'].
+	                                  	'</div>';
+	                                  	echo '<div class="tab-pane fade" id="Comments_Coworkers" role="tabpanel" aria-labelledby="Comments_Coworkers-tab">'
+	                                  		.$row_['Comments_Coworkers'].
+	                                  	'</div>';
+	                                  	echo '<div class="tab-pane fade" id="Comments_Management" role="tabpanel" aria-labelledby="Comments_Management-tab">'
+	                                  		.$row_['Comments_Management'].
+	                                  	'</div>';
+	                                  }
+	                                  else{
+	                                  	// Get questions using has
+	                                  	echo '<div class="tab-pane fade" id="questions" role="tabpanel" aria-labelledby="questions-tab">Questions</div>';
+	                                  }
+	                                echo '</div>
+	                              </div>
+	                            <div class="card-footer text">
+	                            '.$row['Creation_Date'].'
+	                            </div>
+	                          </div>';    	
                           }
                         }
                       ?>
@@ -534,10 +449,10 @@
 
 
               <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-                <div class="container">
+              	<div class="container">
                   <div class="row">
-                    <div class="col-lg-7 col-md-6"> <h2>Settings</h2> </div>
-                  </div>
+                  	<div class="col-lg-7 col-md-6"> <h2>Settings</h2> </div>
+               		</div>
                 </div>
               </div>
             </div> <!--tab-content--> 
