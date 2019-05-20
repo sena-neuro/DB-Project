@@ -42,15 +42,16 @@
         echo $comp_name . ":" . $comp_info;
         exit();
     } else if (isset($_POST["repr"]) && !empty($_POST["repr"])) {
+        $representatives = [];
         $comp_id = $_POST["repr"];
-        $query = "SELECT First_Name, Last_Name, Contact_Info
-                  FROM Account NATURAL JOIN Comp_Rep
-                  WHERE Comp_Rep.CompanyID = $comp_id";
+        $query = "SELECT Name_first_name, Name_second_name, Contact_Info
+                  FROM (Account NATURAL JOIN Comp_Rep) NATURAL JOIN Represents
+                  WHERE CompanyID = $comp_id";
 
         $result = $sql_conn->query($query);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                array_push($representatives, array($row["First_Name"], $row["Last_Name"], $row["Contact_Info"]));
+                array_push($representatives, array($row["Name_first_name"], $row["Name_second_name"], $row["Contact_Info"]));
             }
         } else {
             // No representatives
@@ -155,11 +156,18 @@
                     data: {repr: cid},
                     success: function(res) {
                         console.log(res);
-                        head = res.substring(0, res.indexOf(":"));
-                        header.innerHTML = head;
-
-                        inf = res.substring(res.indexOf(":")+1);
-                        info.innerHTML = inf;
+                        reps = JSON.parse(res);
+                        
+                        header.innerHTML = "Representatives";
+                           
+                        info.innerHTML = "";
+                        for (rep of reps) {
+                            info.innerHTML += "Full Name: " + rep[0] + " " + rep[1] + ", Phone: " + rep[2] + "<br>";
+                        }
+                        
+                        if (reps.length == 0) {
+                            info.innerHTML = "Sorry, there are no representatives for this company."
+                        }
                     }
                 });
             }
@@ -195,7 +203,7 @@
         <nav class="main-nav float-right d-none d-lg-block">
             <ul>
               <li class="active"><a href="#intro">Home</a></li>
-              <li><a href="#about">Profile</a></li>
+              <li><a href="account_page.php">My Account</a></li>
               <li><a href="#services">Companies</a></li>
               <li><a href="#team">Jobs</a></li>
               <li><a href="#">Interviews</a></li>
@@ -249,7 +257,7 @@
                       </a>
                       <div class="dropdown-menu">
                         <a class="dropdown-item active" href="#" onclick="changeContent(this, 0);">General Information</a>
-                        <a class="dropdown-item" href="#" onclick="changeContent(this, 1);">Departments</a>
+                        <a class="dropdown-item" href="#" onclick="changeContent(this, 1);">Followers</a>
                         <a class="dropdown-item" href="#" onclick="changeContent(this, 2);">Representatives</a>
                       </div>
                     </li>
