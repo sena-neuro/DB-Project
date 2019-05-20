@@ -289,11 +289,11 @@
                           // if reviewer get number of job reviews
                           $stmt_rev_post = "SELECT *
                           FROM Post_Job_Review NATURAL JOIN Post
-                          WHERE(Post_Job_Review.AccountID =".$_SESSION['accountID'].") 
+                          WHERE Post_Job_Review.AccountID = ".$_SESSION['accountID']." 
                           UNION 
                           SELECT *
                           FROM Post_Interview_Review NATURAL JOIN Post
-                          WHERE(Post_Interview_Review.AccountID = ".$_SESSION['accountID'].")";
+                          WHERE Post_Interview_Review.AccountID = ".$_SESSION['accountID'];
 
                           if($result_post = mysqli_query($conn,$stmt_rev_post)){
                             $num_of_rev_post= mysqli_num_rows($result_post);
@@ -302,7 +302,7 @@
                           else{
                             printf("Error in Post Job Review");
                           }
-                          if( $num_of_rev_post== 0)
+                          if( $num_of_rev_post == 0)
                           {
                             echo "No Reviews were found";
                           }
@@ -402,13 +402,13 @@
 	                                  <div class="tab-pane fade" id="cons" role="tabpanel" aria-labelledby="cons-tab">'.$row_rew["Cons"].'</div>';
 	                                  if($type == "jb"){
 	                                  	echo '<div class="tab-pane fade" id="Comments_Workplace" role="tabpanel" aria-labelledby="Comments_Workplace-tab">'
-	                                  		$row_['Comments_Workplace']
+	                                  		.$row_['Comments_Workplace'].
 	                                  	'</div>';
 	                                  	echo '<div class="tab-pane fade" id="Comments_Coworkers" role="tabpanel" aria-labelledby="Comments_Coworkers-tab">'
-	                                  		$row_['Comments_Coworkers']
+	                                  		.$row_['Comments_Coworkers'].
 	                                  	'</div>';
 	                                  	echo '<div class="tab-pane fade" id="Comments_Management" role="tabpanel" aria-labelledby="Comments_Management-tab">'
-	                                  		$row_['Comments_Management']
+	                                  		.$row_['Comments_Management'].
 	                                  	'</div>';
 	                                  }
 	                                  else{

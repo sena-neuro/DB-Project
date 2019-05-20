@@ -106,7 +106,7 @@ if(isset($_POST['signUpSubmitRepresentative']) || isset($_POST['signUpSubmitRevi
 		$_SESSION['companyID'] = $companyID;
 	}
 	elseif (isset($_POST[''])) {
-				sql_us = "INSERT INTO User(AccountID) VALUES (?)";
+		$sql_us = "INSERT INTO User(AccountID) VALUES (?)";
 		$stmt_us = mysqli_stmt_init($conn);
 		if(!mysqli_stmt_prepare($stmt_us,$sql_us)){
 			header("Location: ".$prevLoc."?error=sqlerrorUserInsert");
