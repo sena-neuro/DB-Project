@@ -309,12 +309,36 @@
                               <p class="card-text">Please keep in mind that your data will be shared publicly.</p>
                               <form>
                                 <div class="form-group">
-                                  <input type="text" class="form-control" placeholder="Job Title" aria-label="Job Title" aria-describedby="basic-addon1">
-
+                                  <label>Job Title</label>
+                                  <input type="text" class="form-control" placeholder="Senior Software Engineer" aria-label="Job Title" aria-describedby="basic-addon1">
                                 </div>
                                 <div class="form-group">
-                                  <input type="text" class="form-control" name="start-date" id="start-date" />
+                                  <label>Start Date</label>
+                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
                                 </div>
+                                <div class="form-group">
+                                  <label>End Date</label>
+                                  <input class="form-control" type="start-date" value="2011-08-19" id="example-date-input">
+                                </div>
+                                <label>Monthly Salary</label>
+                                <div class="form-row" role="group">
+                                  <div class="form-group col-10">
+                                    <input type="number" class="form-control" placeholder="5000" id="salary">
+                                  </div>
+                                  
+                                  <div class="form-group col">
+                                    <select class="form-control" id="currency-select">
+                                      <option>$</option>
+                                      <option>€</option>
+                                      <option>TL</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label>Location</label>
+                                  <input type="text" class="form-control" placeholder="San Francisco, CA" aria-label="location" aria-describedby="basic-addon1">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
                               </form>
                             </div>
                           </div>
@@ -486,33 +510,4 @@
     <!-- Template Main Javascript File -->
     <script src="js/main.js"></script>
 
-    <!-- For datepicker-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
-    
-    <script type="text/javascript">
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.css');
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.css');
-      .datepicker table tr td.disabled,
-      .datepicker table tr td.disabled:hover {
-        color: #b90000;
-      }
-    </script>
-    <script type="text/javascript">
-      $.fn.datepicker.dates.en.titleFormat="MM";
-        $(document).ready(function(){
-            var date_input=$('input[name="start-date"]'); 
-            date_input.datepicker({
-              format: 'dd-mm',
-              autoclose: true,
-              startView: 1,
-              maxViewMode: "months",
-              orientation: "bottom left",
-            })
-          });
-        $('#datepicker').datepicker("setDate", new Date());
-      
-    </script>
-        
 </html>
