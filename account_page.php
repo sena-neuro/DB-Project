@@ -236,7 +236,10 @@
               <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">General Information</a>
               <?php 
               if($account_type == "Reviewer"){
-                echo'<a class="nav-link" id="v-pills-employment-tab" data-toggle="pill" href="#v-pills-employment" role="tab" aria-controls="v-pills-employment" aria-selected="false">Employment Details</a>';
+              	echo'<a class="nav-link" id="v-pills-employment-tab" data-toggle="pill" href="#v-pills-employment" role="tab" aria-controls="v-pills-employment" aria-selected="false">Employment Details</a>';
+              }
+              else{
+              	echo'<a class="nav-link" id="v-pills-competition-tab" data-toggle="pill" href="#v-pills-competition" role="tab" aria-controls="v-pills-competition" aria-selected="false">Host Competition</a>';
               }
               ?>
               <a class="nav-link" id="v-pills-reviews-tab" data-toggle="pill" href="#v-pills-reviews" role="tab" aria-controls="v-pills-reviews" aria-selected="false">Reviews</a>
@@ -441,7 +444,7 @@
                           // if representative get number of posts to their company
                           $stmt_post ="SELECT *
                           FROM Post
-                          WHERE CompanyID = ".$_SESSION['companyID'];
+                          WHERE CompanyID=".$_SESSION['companyID'];
 
                           if($result_post = mysqli_query($conn,$stmt_post)){
                             $num_of_posts = mysqli_num_rows($result_post);
@@ -548,29 +551,133 @@
                                   '</div>
 	                              </div>
 	                            <div class="card-footer text">
-	                            '.$row['Creation_Date'].'</div>
-                              </div>';    	
+	                            '.$row['Creation_Date'].'</div>';
+	                            if($account_type == "Company Representative")
+	                            {
+	                            	echo '<form action="requestRemoval.php" method="post"
+	                            	 		role="form">
+	                            	 		<input type="Submit" value="Request Removal"></
+	                            	 ';
+	                        	}	
+                              echo '</div>';    	
                           }
                         }
                       ?>
-                    </div> <!-- row -->
-                  </div> <!-- container -->
-                </div> <!--tab-->
+                  </div> <!-- row -->
+                </div> <!-- container -->
+              </div> <!--tab-->
+
+
               <div class="tab-pane fade" id="v-pills-applications" role="tabpanel" aria-labelledby="v-pills-applications-tab">
                 <div class="container">
+                	<h2>Applications</h2>
+                  <?php
+                  if($account_type == "Reviewer"){
+                    $sql = "SELECT * FROM Post_Job_Offer  WHERE AccountID=".$_SESSION['accountID'];
+                    $result = mysqli_query($conn, $sql);
+
+                    $ind=0;
+                    if (mysqli_num_rows($result) > 0) {
+                      while($row = mysqli_fetch_assoc($result)) {
+                        ++$ind;
+                        $salary = $row['Salary'];
+                        $sql_ = "SELECT * FROM Post WHERE PostID=".$row['PostID'];
+                        $result_ = mysqli_query($conn, $sql_);
+                        if (mysqli_num_rows($result_) > 0) {
+                          if($row_ = mysqli_fetch_assoc($result_)) {
+                            $title = $row_['Title'];
+                            $description = $row_['Description'];
+                            $position = $row_['Position'];
+                            $job_type = $row_['Job_Type'];
+                          }
+                        }
+                        echo '
+                        <div class="row">
+                        <div class="card">
+                        <div class="card-body">
+                              <h4 class="card-title">'.$title.'</h4>
+                              <p class="card-text"> Position: '.$position.' <br>
+                                                    Salary: '.$salary.'</p>
+                              <p class="card-text">'.$description.'</p>
+                              <a href="#" class="btn btn-primary">Edit</a>
+                            </div></div></div>';         
+                      }
+                    }
+                  }
+                  elseif ($account_type == "Company Representative") 
+                  {
+                    $sql = "SELECT * FROM Post_Job_Offer NATURAL JOIN Job_Offering WHERE AccountID=".$_SESSION['accountID'];
+                    $result = mysqli_query($conn, $sql);
+
+                    $ind=0;
+                    if (mysqli_num_rows($result) > 0) {
+                      while($row = mysqli_fetch_assoc($result)) {
+                        ++$ind;
+                        $salary = $row['Salary'];
+                        $sql_ = "SELECT * FROM Post WHERE PostID=".$row['PostID'];
+                        $result_ = mysqli_query($conn, $sql_);
+                        if (mysqli_num_rows($result_) > 0) {
+                          if($row_ = mysqli_fetch_assoc($result_)) {
+                            $title = $row_['Title'];
+                            $description = $row_['Description'];
+                            $position = $row_['Position'];
+                            $job_type = $row_['Job_Type'];
+                          }
+                        }
+                        echo '<div class="row"><div class="card">
+                        <div class="card-body">
+														  <h4 class="card-title">'.$title.'</h4>
+														  <p class="card-text"> Position: '.$position.' <br>
+                                                    Salary: '.$salary.'</p>
+														  <p class="card-text">'.$description.'</p>
+														  <a href="#" class="btn btn-primary">Edit</a>
+														</div></div></div>'; 
+
+                        }
+                      } 
+                    }
+                  ?>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="v-pills-notifications" role="tabpanel" aria-labelledby="v-pills-notifications-tab">
+                <div class="container">
+                	<h2>Notifications</h2>
                   <div class="row">
                     <div class="col-lg-7 col-md-6">
-                      <h2>Applications</h2>
+                      
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="tab-pane fade" id="v-pills-notifications" role="tabpanel" aria-labelledby="v-pills-notifications-tab">
+              <div class="tab-pane fade" id="v-pills-competition" role="tabpanel" aria-labelledby="v-pills-competition-tab">
                 <div class="container">
+                <h2>Enter Competition Details</h2>
                   <div class="row">
                     <div class="col-lg-7 col-md-6">
-                      <h2>Notifications</h2>
+
+                    	<form action="hostCompetition.php" method="post" role="form">
+				            <div class="form-group">
+				              <label for="Competition Type"><br>Competition Type</br></label>
+				              <input type="text" placeholder="Competition Type" name="Competition_Type" >
+				            </div>
+				            <div class="form-group">
+				            <label for="bdate"><br>Start Date</br></label>
+				              <input type="date" name="Event_Start_Date" >
+				            </div>
+				              <div class="form-group">
+				              <label for="bdate"><br>Deadline</br></label>
+				              <input type="date" name="Event_Deadline_Date" >
+				            </div>
+				            <div>
+				           	<label for="reward"><br>Reward</br></label>
+				             <input type="number" name="reward" >
+				            </div>
+				            <div>
+				            <textarea rows = "5" cols = "100" placeholder="Enter description for Competition" name = "Description"></textarea></div>
+				            <div class="text-center"><button type="submit" title="Host" name="hostCompetition">Host</button></div>
+				            <input type="hidden" name="AccountID" id="hiddenAccountID" value=<?php echo $_SESSION['accountID']?>>
+          				</form>
                     </div>
                   </div>
                 </div>

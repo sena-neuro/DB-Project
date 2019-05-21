@@ -1,5 +1,7 @@
 <?php
-session_start();?>
+session_start();
+    require 'db_config.php';
+    $conn = Connect();?>
 <head>
   <meta charset="utf-8">
   <title>CIERP</title>
@@ -61,7 +63,6 @@ session_start();?>
           }?>
           <li><a href="index.php#about">About Us</a></li>
           <li><a href="index.php#services">Services</a></li>
-          <li><a href="index.php#team">Team</a></li>
           <?php if(isset($_SESSION['accountID']))
           {
             echo'<li><a href="logOut.php">Log Out</a></li>';
@@ -90,7 +91,7 @@ session_start();?>
     <div class="container d-flex h-100">
       <div class="row justify-content-center align-self-center">
         <div class="col-md-6 intro-info order-md-first order-last">
-          <h2>Rapid Solutions<br>for Your <span>Business!</span></h2>
+          <h2>CIERP<br>Review Companies<span>Find Employees</span></h2>
           <div>
             <a href="#about" class="btn-get-started scrollto">Get Started</a>
           </div>
@@ -124,12 +125,12 @@ session_start();?>
             <div class="about-content">
               <h2>About Us</h2>
               <h3>This is a company interview and employment review platform.</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <p>Aut dolor id. Sint aliquam consequatur ex ex labore. Et quis qui dolor nulla dolores neque. Aspernatur consectetur omnis numquam quaerat. Sed fugiat nisi. Officiis veniam molestiae. Et vel ut quidem alias veritatis repudiandae ut fugit. Est ut eligendi aspernatur nulla voluptates veniam iusto vel quisquam. Fugit ut maxime incidunt accusantium totam repellendus eum error. Et repudiandae eum iste qui et ut ab alias.</p>
+              <p></p>
+              <p>Cierp can can help you find the most rewarding career path you can imagine. CIERP provides</p>
               <ul>
-                <li><i class="ion-android-checkmark-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                <li><i class="ion-android-checkmark-circle"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                <li><i class="ion-android-checkmark-circle"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+                <li><i class="ion-android-checkmark-circle"></i> Employement/Interview Reviews.</li>
+                <li><i class="ion-android-checkmark-circle"></i> Keeping a history of your employements.</li>
+                <li><i class="ion-android-checkmark-circle"></i> Hosting and being a part of competitions.</li>
               </ul>
             </div>
           </div>
@@ -155,50 +156,50 @@ session_start();?>
           <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-duration="1.4s">
             <div class="box">
               <div class="icon" style="background: #fceef3;"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-              <h4 class="title"><a href="">Lorem Ipsum</a></h4>
-              <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+              <h4 class="title"><a href="">Host Competitions</a></h4>
+              <p class="description">
+                <h4>10 Companies that host competitions more than average</h4>
+              <?php 
+              $adv_sql = "SELECT * FROM Company NATURAL JOIN (SELECT CompanyID, COUNT(*) as cnt FROM `Competition` NATURAL JOIN Represents NATURAL JOIN Company GROUP BY CompanyID HAVING cnt > avg(cnt)) AS counts Order By cnt LIMIT 10;";
+              $result_adv = mysqli_query($conn, $adv_sql);
+              if (mysqli_num_rows($result_adv) > 0) {
+                    while($row = mysqli_fetch_assoc($result_adv)) {
+                      echo $row['Name'];
+                    }
+                  }
+              ?>
+
+            </p>
             </div>
           </div>
           <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-duration="1.4s">
             <div class="box">
               <div class="icon" style="background: #fff0da;"><i class="ion-ios-bookmarks-outline" style="color: #e98e06;"></i></div>
-              <h4 class="title"><a href="">Dolor Sitema</a></h4>
-              <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+              <h4 class="title"><a href="">Higher People</a></h4>
+              <h4>10 Companies that hire people at most</h4>
+              <p class="description">
+                <?php 
+                  $sql_hire = "SELECT Name FROM Company NATURAL JOIN (SELECT CompanyID, COUNT(AccountID) AS count FROM Applies NATURAL JOIN Post WHERE Applies.Result = True GROUP BY CompanyID) as cnt ORDER BY count LIMIT 10;";
+                  $result_hire = mysqli_query($conn, $sql_hire);
+                  if (mysqli_num_rows($result_adv) > 0) {
+                    while($row = mysqli_fetch_assoc($result_hire)) {
+                      echo $row['Name'];
+                    }
+                  }
+                ?>
+
+              </p>
             </div>
           </div>
 
           <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-delay="0.1s" data-wow-duration="1.4s">
             <div class="box">
               <div class="icon" style="background: #e6fdfc;"><i class="ion-ios-paper-outline" style="color: #3fcdc7;"></i></div>
-              <h4 class="title"><a href="">Sed ut perspiciatis</a></h4>
-              <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+              <h4 class="title"><a href="">Review Companies</a></h4>
+              <p class="description">You Can Review Employement and Interview Processes</p>
             </div>
           </div>
-          <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-delay="0.1s" data-wow-duration="1.4s">
-            <div class="box">
-              <div class="icon" style="background: #eafde7;"><i class="ion-ios-speedometer-outline" style="color:#41cf2e;"></i></div>
-              <h4 class="title"><a href="">Magni Dolores</a></h4>
-              <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-delay="0.2s" data-wow-duration="1.4s">
-            <div class="box">
-              <div class="icon" style="background: #e1eeff;"><i class="ion-ios-world-outline" style="color: #2282ff;"></i></div>
-              <h4 class="title"><a href="">Nemo Enim</a></h4>
-              <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-4 wow bounceInUp" data-wow-delay="0.2s" data-wow-duration="1.4s">
-            <div class="box">
-              <div class="icon" style="background: #ecebff;"><i class="ion-ios-clock-outline" style="color: #8660fe;"></i></div>
-              <h4 class="title"><a href="">Eiusmod Tempor</a></h4>
-              <p class="description">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
-            </div>
-          </div>
-
         </div>
-
       </div>
     </section><!-- #services -->
   <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
