@@ -85,7 +85,7 @@
     } else if (isset($_POST["joboffer"]) && !empty($_POST["joboffer"])) {
         $joboffers = [];
         $comp_id = $_POST["joboffer"];
-        $query = "SELECT Title, Description, Job_Type, Salary, Quota
+        $query = "SELECT Title, Description, Job_Type, Salary, Quota, PostID
                   FROM Post NATURAL JOIN Company NATURAL JOIN Job_Offering
                   WHERE CompanyID = ?";
                   
@@ -96,7 +96,7 @@
         $result = mysqli_stmt_get_result($stmt);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                array_push($joboffers, array($row["Title"], $row["Description"], $row["Job_Type"], $row["Salary"], $row["Quota"]));
+                array_push($joboffers, array($row["Title"], $row["Description"], $row["Job_Type"], $row["Salary"], $row["Quota"], $row["PostID"]));
             }
         } else {
             // No job offers
@@ -225,6 +225,7 @@
         });
         
         var cid = "<?php echo $comp_id ?>";
+        var aid = "<?php echo $_SESSION['accountID']; ?>";
         
         function loadGeneralInfo(element) {
             var header = document.getElementById("company_info_header");
@@ -334,13 +335,20 @@
                     offers = JSON.parse(res);
                     
                     jobofferings.innerHTML = "";
+                    var innerHTMLString = "";
                     for (offer of offers) {
-                        jobofferings.innerHTML += "<h5>" + offer[0] + "</h5>";
-                        jobofferings.innerHTML += "<p>" + offer[1] + "</p>";
-                        jobofferings.innerHTML += "<p>Job Type: " + offer[2] + "</p>";
-                        jobofferings.innerHTML += "<p>Salary: " + offer[3] + "</p>";
-                        jobofferings.innerHTML += "<p>Quota: " + offer[4] + "</p><br>";
+                        innerHTMLString += "<h5>" + offer[0] + "</h5>";
+                        innerHTMLString += "<p>" + offer[1] + "</p>";
+                        innerHTMLString += "<p>Job Type: " + offer[2] + "</p>";
+                        innerHTMLString += "<p>Salary: " + offer[3] + "</p>";
+                        innerHTMLString += "<p>Quota: " + offer[4] + "</p>";
+                        innerHTMLString += "<form method='post' action='jobapply_action.php'>";
+                        innerHTMLString += "<input type='submit' value='Apply for Job!' class='btn btn-primary'></input>";
+                        innerHTMLString += "<input type='hidden' name='pid' value='" + offer[5] + "'></input>";
+                        innerHTMLString += "<input type='hidden' name='aid' value='" + aid + "'></input>";
+                        innerHTMLString += "</form><br>";
                     }
+                    jobofferings.innerHTML = innerHTMLString;
                     
                     if (offers.length == 0) {
                         jobofferings.innerHTML = "Sorry, this company has no job offers.";
@@ -363,25 +371,30 @@
                 }
             });
         }
+        
+        function setCompanyID(event) {
+            document.getElementById("hiddenCompanyId").value = cid;
+        }
 
     </script>
     <header id="header">
         <div class="container">
-        <div class="logo float-left">
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
-            <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
-        </div>
+            <div class="logo float-left">
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
+                <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
+            </div>
 
-        <nav class="main-nav float-right d-none d-lg-block">
-            <ul>
-              <li class="active"><a href="#intro">Home</a></li>
-              <li><a href="account_page.php">My Account</a></li>
-              <li><a href="#services">Companies</a></li>
-              <li><a href="#team">Jobs</a></li>
-              <li><a href="#">Interviews</a></li>
-            </ul>
-        </nav><!-- .main-nav -->
+            <nav class="main-nav float-right d-none d-lg-block">
+                <ul>
+                  <li class="active"><a href="#intro">Home</a></li>
+                  <li><a href="account_page.php">My Account</a></li>
+                  <li><a href="#services">Companies</a></li>
+                  <li><a href="#team">Jobs</a></li>
+                  <li><a href="#">Interviews</a></li>
+                </ul>
+            </nav><!-- .main-nav -->
+        </div>
     </header>
     <section id="about">
         <div class="container">
@@ -501,6 +514,15 @@
                             <div class="jumbotron">
                                 <div class="row">
                                     <div class="col-sm-8">
+                                        <div class="d-flex justify-content-around" style="width: 980px; position: absolute; top: -30px;">
+                                            <p></p>
+                                            <form method="post" onsubmit="setCompanyID(event);" action="write_review.php">
+                                                <input type="submit" name="job_review" class="btn btn-outline-primary" value="Write Job Review"></input>
+                                                <input type="submit" name="interview_review" class="btn btn-outline-info" value="Write Interview Review"></input>
+                                                <input type="hidden" name="cid" id="hiddenCompanyId" value="">
+                                            </form>
+                                            <p></p>
+                                        </div>
                                         <h1>Reviews</h1>
                                         <div id="company_reviews"></div>
                                     </div>
