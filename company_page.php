@@ -85,7 +85,7 @@
     } else if (isset($_POST["joboffer"]) && !empty($_POST["joboffer"])) {
         $joboffers = [];
         $comp_id = $_POST["joboffer"];
-        $query = "SELECT Title, Description, Job_Type, Salary, Quota
+        $query = "SELECT Title, Description, Job_Type, Salary, Quota, PostID
                   FROM Post NATURAL JOIN Company NATURAL JOIN Job_Offering
                   WHERE CompanyID = ?";
                   
@@ -96,7 +96,7 @@
         $result = mysqli_stmt_get_result($stmt);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                array_push($joboffers, array($row["Title"], $row["Description"], $row["Job_Type"], $row["Salary"], $row["Quota"]));
+                array_push($joboffers, array($row["Title"], $row["Description"], $row["Job_Type"], $row["Salary"], $row["Quota"], $row["PostID"]));
             }
         } else {
             // No job offers
@@ -225,6 +225,7 @@
         });
         
         var cid = "<?php echo $comp_id ?>";
+        var aid = "<?php echo $_SESSION['accountID']; ?>";
         
         function loadGeneralInfo(element) {
             var header = document.getElementById("company_info_header");
@@ -334,13 +335,20 @@
                     offers = JSON.parse(res);
                     
                     jobofferings.innerHTML = "";
+                    var innerHTMLString = "";
                     for (offer of offers) {
-                        jobofferings.innerHTML += "<h5>" + offer[0] + "</h5>";
-                        jobofferings.innerHTML += "<p>" + offer[1] + "</p>";
-                        jobofferings.innerHTML += "<p>Job Type: " + offer[2] + "</p>";
-                        jobofferings.innerHTML += "<p>Salary: " + offer[3] + "</p>";
-                        jobofferings.innerHTML += "<p>Quota: " + offer[4] + "</p><br>";
+                        innerHTMLString += "<h5>" + offer[0] + "</h5>";
+                        innerHTMLString += "<p>" + offer[1] + "</p>";
+                        innerHTMLString += "<p>Job Type: " + offer[2] + "</p>";
+                        innerHTMLString += "<p>Salary: " + offer[3] + "</p>";
+                        innerHTMLString += "<p>Quota: " + offer[4] + "</p>";
+                        innerHTMLString += "<form method='post' action='jobapply_action.php'>";
+                        innerHTMLString += "<input type='submit' value='Apply for Job!' class='btn btn-primary'></input>";
+                        innerHTMLString += "<input type='hidden' name='pid' value='" + offer[5] + "'></input>";
+                        innerHTMLString += "<input type='hidden' name='aid' value='" + aid + "'></input>";
+                        innerHTMLString += "</form><br>";
                     }
+                    jobofferings.innerHTML = innerHTMLString;
                     
                     if (offers.length == 0) {
                         jobofferings.innerHTML = "Sorry, this company has no job offers.";
