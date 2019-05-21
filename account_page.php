@@ -551,15 +551,18 @@
                                   '</div>
 	                              </div>
 	                            <div class="card-footer text">
-	                            '.$row['Creation_Date'].'</div>';
+	                            '.$row['Creation_Date'];
 	                            if($account_type == "Company Representative")
 	                            {
 	                            	echo '<form action="requestRemoval.php" method="post"
 	                            	 		role="form">
-	                            	 		<input type="Submit" value="Request Removal"></
+	                            	 		<input type="text" placeholder="Why do you want this post to be removed">
+	                            	 		<input type="Submit" value="Request Removal">
+	                            	 	</form>
 	                            	 ';
 	                        	}	
-                              echo '</div>';    	
+                              echo '</div>
+                              	</div>';    	
                           }
                         }
                       ?>
