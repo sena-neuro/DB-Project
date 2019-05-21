@@ -363,25 +363,30 @@
                 }
             });
         }
+        
+        function setCompanyID(event) {
+            document.getElementById("hiddenCompanyId").value = cid;
+        }
 
     </script>
     <header id="header">
         <div class="container">
-        <div class="logo float-left">
-            <!-- Uncomment below if you prefer to use an image logo -->
-            <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
-            <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
-        </div>
+            <div class="logo float-left">
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
+                <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
+            </div>
 
-        <nav class="main-nav float-right d-none d-lg-block">
-            <ul>
-              <li class="active"><a href="#intro">Home</a></li>
-              <li><a href="account_page.php">My Account</a></li>
-              <li><a href="#services">Companies</a></li>
-              <li><a href="#team">Jobs</a></li>
-              <li><a href="#">Interviews</a></li>
-            </ul>
-        </nav><!-- .main-nav -->
+            <nav class="main-nav float-right d-none d-lg-block">
+                <ul>
+                  <li class="active"><a href="#intro">Home</a></li>
+                  <li><a href="account_page.php">My Account</a></li>
+                  <li><a href="#services">Companies</a></li>
+                  <li><a href="#team">Jobs</a></li>
+                  <li><a href="#">Interviews</a></li>
+                </ul>
+            </nav><!-- .main-nav -->
+        </div>
     </header>
     <section id="about">
         <div class="container">
@@ -501,6 +506,15 @@
                             <div class="jumbotron">
                                 <div class="row">
                                     <div class="col-sm-8">
+                                        <div class="d-flex justify-content-around" style="width: 980px; position: absolute; top: -30px;">
+                                            <p></p>
+                                            <form method="post" onsubmit="setCompanyID(event);" action="write_review.php">
+                                                <input type="submit" name="job_review" class="btn btn-outline-primary" value="Write Job Review"></input>
+                                                <input type="submit" name="interview_review" class="btn btn-outline-info" value="Write Interview Review"></input>
+                                                <input type="hidden" name="cid" id="hiddenCompanyId" value="">
+                                            </form>
+                                            <p></p>
+                                        </div>
                                         <h1>Reviews</h1>
                                         <div id="company_reviews"></div>
                                     </div>

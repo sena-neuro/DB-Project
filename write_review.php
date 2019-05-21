@@ -1,7 +1,6 @@
 <?php
-session_start();
-$cid = $_POST['cid']; # todo: might be problematic
-$_SESSION['cid'] = $cid;
+    session_start();
+    $cid = $_POST['cid'];
 ?>
 <head>
     <meta charset="utf-8">
@@ -28,7 +27,6 @@ $_SESSION['cid'] = $cid;
     <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
 
     <!-- Main Stylesheet File -->
-    <link rel="stylesheet" href="css/ratingstyle.css">
     <link href="css/style.css" rel="stylesheet">
 
 </head>
@@ -48,9 +46,7 @@ $_SESSION['cid'] = $cid;
     });
     </script>
     <header id="header">
-
         <div class="container">
-
             <div class="logo float-left">
                 <!-- Uncomment below if you prefer to use an image logo -->
                 <h1 class="text-light"><a href="#intro" class="scrollto"><span>CIERP</span></a></h1>
@@ -58,21 +54,20 @@ $_SESSION['cid'] = $cid;
             </div>
             <nav class="main-nav float-right d-none d-lg-block">
                 <ul>
-                    <?php if(isset($_SESSION['accountID']))
-                    {
+                    <?php
+                    if (isset($_SESSION['accountID'])) {
                         echo'<li class="active"><a href="account_page.php">My Account</a></li>';
-
                     }
                     else{
                         echo'<li class="active"><a href="index.php">Home</a></li>';
-                    }?>
+                    }
+                    ?>
                     <li><a href="index.php#about">About Us</a></li>
                     <li><a href="index.php#services">Services</a></li>
                     <li><a href="index.php#team">Team</a></li>
-                    <?php if(isset($_SESSION['accountID']))
-                    {
+                    <?php 
+                    if(isset($_SESSION['accountID'])) {
                         echo'<li><a href="logOut.php">Log Out</a></li>';
-
                     }
                     else{
                         echo'
@@ -83,47 +78,192 @@ $_SESSION['cid'] = $cid;
                         <li><a href="reviewerSignUp.php">I am a reviewer</a></li>
                         </ul>
                         </li>';
-                    }?>
+                    }
+                    ?>
                 </ul>
             </nav>
-
-
         </div>
     </header>
     <section id="about">
-
+        <script>
+            var rating = 10;
+            var review_t = "<?php if (isset($_POST['job_review'])) { echo 'job'; } else { echo 'interview'; } ?>";
+            var cid = "<?php echo $cid ?>";
+            
+            console.log(cid);
+            console.log(rating);
+            console.log(review_t);
+            
+            function giveRating(element) {
+                id = element.id[element.id.length - 1];
+                for (let i = 0; i < 10; i++) {
+                    if (i <= id) {
+                        document.getElementById("star" + i).style.color = "orange";
+                    } else {
+                        document.getElementById("star" + i).style.color = "black";
+                    }
+                }
+                rating = parseInt(id) + 1;
+            }
+            
+            function formSubmitted(event) {
+                if (cid == null || cid == "") {
+                    event.preventDefault();
+                    alert("Invalid company.");
+                    return;
+                }
+                
+                if (review_t != "job" && review_t != "interview") {
+                    event.preventDefault();
+                    alert("Invalid review type.");
+                    return;
+                }
+                
+                // Cid
+                var company_id = document.getElementById("company_id");
+                company_id.value = cid;
+                
+                // Anonimity
+                var checkbox = document.getElementById("checkbox");
+                var anonymous = document.getElementById("anonymous");
+                if (checkbox.checked == true) {
+                    anonymous.value = 1;
+                } else {
+                    anonymous.value = 0;
+                }
+                
+                // Rating
+                var rating_ele = document.getElementById("rating");
+                rating_ele.value = rating;
+                
+                // Title
+                var title = document.getElementById("title");
+                if (title.value.length < 5) {
+                    alert("Title length must be at least 6");
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Description
+                var description = document.getElementById("description");
+                if (description.value.length < 5) {
+                    alert("Description length must be at least 6");
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Position
+                var position = document.getElementById("position");
+                
+                // Job
+                var job = document.getElementById("job");
+                
+                // Pros & Cons
+                var pros = document.getElementById("pros");
+                var cons = document.getElementById("cons");
+                
+                // Review_Type
+                var review_type = document.getElementById("review_type");
+                review_type.value = review_t;
+                
+                var workplace = document.getElementById("workplace");
+                var coworkers = document.getElementById("coworkers");
+                var management = document.getElementById("management");
+                
+                var salary = document.getElementById("salary");
+                
+                // Date info
+                var d = document.getElementById("date");
+                var date = new Date();
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+                var finalDate = year + "-" + month + "-" + day;
+                d.value = finalDate;
+                
+                console.log(rating_ele.value);
+                console.log(title.value);
+                console.log(description.value);
+                console.log(position.value);
+                console.log(job.value);
+                console.log(pros.value);
+                console.log(cons.value);
+                console.log(salary.value);
+                console.log(d.value);
+                console.log(anonymous.value);
+                console.log(workplace.value);
+                console.log(coworkers.value);
+                console.log(management.value);
+                console.log(company_id.value);
+                console.log(review_type.value);
+                console.log(document.getElementById("submit-button").value);
+            }
+        </script>
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 col-md-6">
-                    <h2>Review this company</h2>
-                    <form action="review_action.php" method="post" role="form">
-                        <div class="form-group">
-                            <div class="rating">
-                                <span><input type="radio" name="rating" id="str5" value="5"><label class="fa fa-star" for="str5"></label></span>
-                                <span><input type="radio" name="rating" id="str4" value="4"><label class="fa fa-star" for="str4"></label></span>
-                                <span><input type="radio" name="rating" id="str3" value="3"><label class="fa fa-star" for="str3"></label></span>
-                                <span><input type="radio" name="rating" id="str2" value="2"><label class="fa fa-star" for="str2"></label></span>
-                                <span><input type="radio" name="rating" id="str1" value="1"><label class="fa fa-star" for="str1"></label></span>
+                    <div class="jumbotron w-100">
+                        <h2>Review this company</h2>
+                        <form method="post" onsubmit="formSubmitted(event);" action="review_action.php">
+                            <div class="d-flex flex-column">
+                                <h5>Rating:</h5>
+                                <div class="w-100 d-flex justify-content-around">
+                                    <?php
+                                        echo "<p></p><p></p><p></p><p></p>";
+                                        for ($i = 0; $i < 10; $i++) {
+                                            echo '<span class="fa fa-star" id="star'.$i.'" onclick="giveRating(this);" style="color: orange"></span>';
+                                        }
+                                        echo "<p></p><p></p><p></p><p></p>";
+                                    ?>
+                                </div><br>
+                                <input type="hidden" id="rating" name="rating" value=""></input>
+                                <input type="hidden" id="company_id" name="company_id" value=""></input>
+                                <input type="hidden" id="date" name="date" value=""></input>
+                                <input type="hidden" id="anonymous" name="anonymous" value=""></input>
+                                <div class="checkbox">
+                                    <label style="font-size: 20px">Anonymous Post:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="checkbox" style="display:inline; transform: scale(1.5)"></label>
+                                </div><br>
+                                <h5>Title:</h5>
+                                <input type="text" id="title" name="title" class="form-control" required></input><br>
+                                <h5>Description:</h5>
+                                <input type="text" id="description" name="description" class="form-control" required></input><br>
+                                <h5>Position:</h5>
+                                <input type="text" id="position" name="position" class="form-control" required></input><br>
+                                <h5>Job:</h5>
+                                <input type="text" id="job" name="job" class="form-control" required></input><br>
+                                <h5>Pros:</h5>
+                                <textarea class="form-control" id="pros" name="pros" rows="5" required></textarea><br>
+                                <h5>Cons:</h5>
+                                <textarea class="form-control" id="cons" name="cons" rows="5" required></textarea><br>
+                                <input type="hidden" id="review_type" name="review_type" value=""></input>
+                                <?php
+                                    if (isset($_POST["job_review"])) {
+                                        echo "<h5>Workplace:</h5>";
+                                        echo '<textarea class="form-control" id="workplace" name="workplace" rows="5"></textarea><br>';
+                                        echo "<h5>Coworkers:</h5>";
+                                        echo '<textarea class="form-control" id="coworkers" name="coworkers" rows="5"></textarea><br>';
+                                        echo "<h5>Management:</h5>";
+                                        echo '<textarea class="form-control" id="management" name="management" rows="5"></textarea><br>';
+                                    }
+                                ?>
+                                <h5>Salary:</h5>
+                                <div class="form-row" role="group">
+                                    <div class="form-group col-10">
+                                        <input type="number" id="salary" name="salary" class="form-control" placeholder="5000" required>
+                                    </div>
+                                      
+                                    <div class="form-group col">
+                                        <select class="form-control" id="currency-select">
+                                            <option>$</option>
+                                            <option>€</option>
+                                            <option>TL</option>
+                                        </select>
+                                    </div>
+                                </div><br>
+                                <input type="submit" id="submit-button" class="btn btn-primary" name="Submit" value="Submit"></input>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <br>
-                            <label style="display:block" for="anon"><br>Anonimity</label>
-                            <input style="display:block" type="checkbox" id="anon" name="anon">
-                        </div>
-                        <div class="form-group">
-                            <label for="pros"><br>Pros</br></label>
-                            <textarea placeholder="Pros" id="pros" name="pros"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="cons"><br>Cons</br></label>
-                            <textarea placeholder="Cons" id="cons" name="cons"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" title="Submit" id="reviewSubmit" name="reviewSubmit">Submit</button>
-                            <button type="submit" title="Cancel" id="reviewCancel" name="reviewCancel">Cancel</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
