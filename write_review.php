@@ -88,7 +88,8 @@
         <script>
             var rating = 10;
             var review_t = "<?php if (isset($_POST['job_review'])) { echo 'job'; } else { echo 'interview'; } ?>";
-            var cid = "<?php echo $cid ?>";
+            var cid = "<?php echo $cid; ?>";
+            var aid = "<?php echo $_SESSION["accountID"]; ?>";
             
             console.log(cid);
             console.log(rating);
@@ -197,6 +198,7 @@
                 console.log(company_id.value);
                 console.log(review_type.value);
                 console.log(document.getElementById("submit-button").value);
+                console.log(aid);
             }
         </script>
         <div class="container">

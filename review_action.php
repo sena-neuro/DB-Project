@@ -36,7 +36,7 @@
                 $query = "SELECT AccountID FROM Employee WHERE AccountID = ?";
                 $stmt = mysqli_stmt_init($conn);
                 mysqli_stmt_prepare($stmt, $query);
-                mysqli_stmt_bind_param($stmt, "i", $_SESSION["AccountID"]);
+                mysqli_stmt_bind_param($stmt, "i", $_SESSION["accountID"]);
                 $result = mysqli_stmt_execute($stmt);
                 
                 // User isn't in Employee's table.
@@ -44,7 +44,7 @@
                     $query = "INSERT INTO Employee(AccountID, Salary, Position) VALUES(?, ?, ?)";
                     $stmt = mysqli_stmt_init($conn);
                     mysqli_stmt_prepare($stmt, $query);
-                    mysqli_stmt_bind_param($stmt, "iis", $_SESSION["AccountID"], $_POST["salary"], $_POST["position"]);
+                    mysqli_stmt_bind_param($stmt, "iis", $_SESSION["accountID"], $_POST["salary"], $_POST["position"]);
                     mysqli_stmt_execute($stmt);
                 }
                 
@@ -52,8 +52,10 @@
                 $query = "INSERT INTO Post_Job_Review(PostID, AccountID) VALUES(?, ?)";
                 $stmt = mysqli_stmt_init($conn);
                 mysqli_stmt_prepare($stmt, $query);
-                mysqli_stmt_bind_param($stmt, "ii", $post_id, $_SESSION["AccountID"]);
+                mysqli_stmt_bind_param($stmt, "ii", $post_id, $_SESSION["accountID"]);
                 mysqli_stmt_execute($stmt);
+                
+                header("Location: account_page.php");
             } else {
                 header("Location: account_page.php");
             }
@@ -69,7 +71,7 @@
                 $query = "SELECT AccountID FROM Interviewee WHERE AccountID = ?";
                 $stmt = mysqli_stmt_init($conn);
                 mysqli_stmt_prepare($stmt, $query);
-                mysqli_stmt_bind_param($stmt, "i", $_SESSION["AccountID"]);
+                mysqli_stmt_bind_param($stmt, "i", $_SESSION["accountID"]);
                 $result = mysqli_stmt_execute($stmt);
                 
                 // User isn't in Interviewee's table.
@@ -77,7 +79,7 @@
                     $query = "INSERT INTO Interviewee(AccountID) VALUES(?)";
                     $stmt = mysqli_stmt_init($conn);
                     mysqli_stmt_prepare($stmt, $query);
-                    mysqli_stmt_bind_param($stmt, "i", $_SESSION["AccountID"]);
+                    mysqli_stmt_bind_param($stmt, "i", $_SESSION["accountID"]);
                     mysqli_stmt_execute($stmt);
                 }
                 
@@ -85,14 +87,14 @@
                 $query = "INSERT INTO Post_Interview_Review(PostID, AccountID) VALUES(?, ?)";
                 $stmt = mysqli_stmt_init($conn);
                 mysqli_stmt_prepare($stmt, $query);
-                mysqli_stmt_bind_param($stmt, "ii", $post_id, $_SESSION["AccountID"]);
+                mysqli_stmt_bind_param($stmt, "ii", $post_id, $_SESSION["accountID"]);
                 mysqli_stmt_execute($stmt);
+                header("Location: account_page.php");
         } else {
             header("Location: account_page.php");
         }
-        
-        header("Location: account_page.php");
     } else {
+        header("Location: account_page.php");
     }
     
 ?>
